@@ -16,4 +16,27 @@ class ConfigSpec extends ObjectBehavior
     {
         $this->shouldHaveType('MVPDesign\ThemosisInstaller\Config');
     }
+
+    /**
+     * it should return a database name
+     *
+     * @return void
+     */
+    public function it_should_return_a_database_name()
+    {
+        $this->getDbName()->shouldReturn(null);
+    }
+
+    /**
+     * it should set a database name
+     *
+     * @return void
+     */
+    public function it_should_set_a_database_name()
+    {
+        $dbName = Argument::type('string');
+
+        $this->setDbName($dbName);
+        $this->getDbName()->shouldReturn($dbName);
+    }
 }
