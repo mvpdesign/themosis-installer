@@ -33,6 +33,17 @@ class Config
     private $dbHost = 'localhost';
 
     /**
+     * environments
+     *
+     * @var string
+     */
+    private $environments = array(
+        'development',
+        'staging',
+        'production'
+    );
+
+    /**
      * environment
      *
      * @var string
@@ -164,6 +175,10 @@ class Config
      */
     public function setEnvironment($environment)
     {
+        if ( ! in_array($environment, $this->environments)) {
+            return false;
+        }
+
         $this->environment = $environment;
     }
 

@@ -120,16 +120,35 @@ class ConfigSpec extends ObjectBehavior
     }
 
     /**
-     * it should set a environment
+     * it should set a valid environment
      *
      * @return void
      */
-    public function it_should_set_a_environment()
+    public function it_should_set_a_valid_environment()
     {
-        $environment = Argument::type('string');
+        $environments = array(
+            'development',
+            'staging',
+            'production'
+        );
+
+        foreach($environments as $environment) {
+            $this->setEnvironment($environment);
+            $this->getEnvironment()->shouldReturn($environment);
+        }
+    }
+
+    /**
+     * it should not set an invalid environment
+     *
+     * @return void
+     */
+    public function it_should_not_set_an_invalid_environment()
+    {
+        $environment = 'invalid_environment';
 
         $this->setEnvironment($environment);
-        $this->getEnvironment()->shouldReturn($environment);
+        $this->getEnvironment()->shouldReturn('production');
     }
 
     /**
