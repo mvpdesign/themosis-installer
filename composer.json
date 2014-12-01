@@ -1,0 +1,26 @@
+{
+    "name": "mvpdesign/themosis-installer",
+    "description": "Themosis installer",
+    "keywords": [
+        "themosis", "installer", "composer"
+    ],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Brock Riemenschneider",
+            "email": "brock@mvpdesign.com",
+            "homepage": "https://github.com/BsWiM"
+        }
+    ],
+    "require-dev": {
+        "phpspec/phpspec": "~2.0",
+        "mockery/mockery": "~0.9"
+    },
+    "require": {
+        "php": ">=5.3.4"
+    },
+    "config": {
+        "bin-dir": "bin"
+    }
+}
