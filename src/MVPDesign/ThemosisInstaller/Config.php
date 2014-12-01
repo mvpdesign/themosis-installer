@@ -30,7 +30,7 @@ class Config
      *
      * @var string
      */
-    private $dbHost;
+    private $dbHost = 'localhost';
 
     /**
      * environment

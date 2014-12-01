@@ -93,7 +93,7 @@ class ConfigSpec extends ObjectBehavior
      */
     public function it_should_return_a_database_host()
     {
-        $this->getDbHost()->shouldReturn(null);
+        $this->getDbHost()->shouldReturn('localhost');
     }
 
     /**
