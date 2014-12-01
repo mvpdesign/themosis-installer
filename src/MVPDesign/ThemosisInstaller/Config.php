@@ -26,6 +26,13 @@ class Config
     private $dbPassword;
 
     /**
+     * database host
+     *
+     * @var string
+     */
+    private $dbHost;
+
+    /**
      * get the database name
      *
      * @return string
@@ -86,5 +93,26 @@ class Config
     public function setDbPassword($dbPassword)
     {
         $this->dbPassword = $dbPassword;
+    }
+
+    /**
+     * get the database host
+     *
+     * @return string
+     */
+    public function getDbHost()
+    {
+        return $this->dbHost;
+    }
+
+    /**
+     * set the database host
+     *
+     * @param  string $dbHost
+     * @return void
+     */
+    public function setDbHost($dbHost)
+    {
+        $this->dbHost = $dbHost;
     }
 }

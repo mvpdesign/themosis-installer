@@ -85,4 +85,27 @@ class ConfigSpec extends ObjectBehavior
         $this->setDbPassword($dbPassword);
         $this->getDbPassword()->shouldReturn($dbPassword);
     }
+
+    /**
+     * it should return a database host
+     *
+     * @return void
+     */
+    public function it_should_return_a_database_host()
+    {
+        $this->getDbHost()->shouldReturn(null);
+    }
+
+    /**
+     * it should set a database host
+     *
+     * @return void
+     */
+    public function it_should_set_a_database_host()
+    {
+        $dbHost = Argument::type('string');
+
+        $this->setDbHost($dbHost);
+        $this->getDbHost()->shouldReturn($dbHost);
+    }
 }
