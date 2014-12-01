@@ -39,4 +39,27 @@ class ConfigSpec extends ObjectBehavior
         $this->setDbName($dbName);
         $this->getDbName()->shouldReturn($dbName);
     }
+
+    /**
+     * it should return a database user
+     *
+     * @return void
+     */
+    public function it_should_return_a_database_user()
+    {
+        $this->getDbUser()->shouldReturn(null);
+    }
+
+    /**
+     * it should set a database user
+     *
+     * @return void
+     */
+    public function it_should_set_a_database_user()
+    {
+        $dbUser = Argument::type('string');
+
+        $this->setDbUser($dbUser);
+        $this->getDbUser()->shouldReturn($dbUser);
+    }
 }

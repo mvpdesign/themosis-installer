@@ -12,6 +12,13 @@ class Config
     private $dbName;
 
     /**
+     * database user
+     *
+     * @var string
+     */
+    private $dbUser;
+
+    /**
      * get the database name
      *
      * @return string
@@ -30,5 +37,26 @@ class Config
     public function setDbName($dbName)
     {
         $this->dbName = $dbName;
+    }
+
+    /**
+     * get the database user
+     *
+     * @return string
+     */
+    public function getDbUser()
+    {
+        return $this->dbUser;
+    }
+
+    /**
+     * set the database user
+     *
+     * @param  string $dbUser
+     * @return void
+     */
+    public function setDbUser($dbUser)
+    {
+        $this->dbUser = $dbUser;
     }
 }
