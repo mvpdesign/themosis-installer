@@ -127,7 +127,7 @@ class ConfigSpec extends ObjectBehavior
     public function it_should_set_a_valid_environment()
     {
         $environments = array(
-            'development',
+            'local',
             'staging',
             'production'
         );

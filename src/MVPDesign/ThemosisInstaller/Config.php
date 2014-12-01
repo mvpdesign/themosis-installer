@@ -40,7 +40,7 @@ class Config
      * @var string
      */
     const ENVIRONMENTS = array(
-        'development',
+        'local',
         'staging',
         'production'
     );
