@@ -132,7 +132,7 @@ class ConfigSpec extends ObjectBehavior
             'production'
         );
 
-        foreach($environments as $environment) {
+        foreach ($environments as $environment) {
             $this->setEnvironment($environment);
             $this->getEnvironment()->shouldReturn($environment);
         }
@@ -147,8 +147,7 @@ class ConfigSpec extends ObjectBehavior
     {
         $environment = 'invalid_environment';
 
-        $this->setEnvironment($environment);
-        $this->getEnvironment()->shouldReturn('production');
+        $this->shouldThrow('\MVPDesign\ThemosisInstaller\InvalidEnvironmentException')->duringSetEnvironment($environment);
     }
 
     /**

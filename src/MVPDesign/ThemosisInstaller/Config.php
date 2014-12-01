@@ -2,6 +2,8 @@
 
 namespace MVPDesign\ThemosisInstaller;
 
+use MVPDesign\ThemosisInstaller\InvalidEnvironmentException;
+
 class Config
 {
     /**
@@ -37,7 +39,7 @@ class Config
      *
      * @var string
      */
-    private $environments = array(
+    const ENVIRONMENTS = array(
         'development',
         'staging',
         'production'
@@ -175,11 +177,24 @@ class Config
      */
     public function setEnvironment($environment)
     {
-        if ( ! in_array($environment, $this->environments)) {
-            return false;
+        $this->environment = Config::validateEnvironment($environment);
+    }
+
+    /**
+     * validate the environment
+     *
+     * @param  string $environment
+     * @return void
+     *
+     * @throws InvalidEnvironmentException
+     */
+    public static function validateEnvironment($environment)
+    {
+        if ( ! in_array($environment, Config::ENVIRONMENTS)) {
+            throw new InvalidEnvironmentException('Valid environments are: ' . implode(', ', Config::ENVIRONMENTS));
         }
 
-        $this->environment = $environment;
+        return $environment;
     }
 
     /**
