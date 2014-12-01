@@ -62,4 +62,27 @@ class ConfigSpec extends ObjectBehavior
         $this->setDbUser($dbUser);
         $this->getDbUser()->shouldReturn($dbUser);
     }
+
+    /**
+     * it should return a database password
+     *
+     * @return void
+     */
+    public function it_should_return_a_database_password()
+    {
+        $this->getDbPassword()->shouldReturn(null);
+    }
+
+    /**
+     * it should set a database password
+     *
+     * @return void
+     */
+    public function it_should_set_a_database_password()
+    {
+        $dbPassword = Argument::type('string');
+
+        $this->setDbPassword($dbPassword);
+        $this->getDbPassword()->shouldReturn($dbPassword);
+    }
 }

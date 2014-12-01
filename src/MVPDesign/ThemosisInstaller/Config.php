@@ -19,6 +19,13 @@ class Config
     private $dbUser;
 
     /**
+     * database password
+     *
+     * @var string
+     */
+    private $dbPassword;
+
+    /**
      * get the database name
      *
      * @return string
@@ -58,5 +65,26 @@ class Config
     public function setDbUser($dbUser)
     {
         $this->dbUser = $dbUser;
+    }
+
+    /**
+     * get the database password
+     *
+     * @return string
+     */
+    public function getDbPassword()
+    {
+        return $this->dbPassword;
+    }
+
+    /**
+     * set the database password
+     *
+     * @param  string $dbPassword
+     * @return void
+     */
+    public function setDbPassword($dbPassword)
+    {
+        $this->dbPassword = $dbPassword;
     }
 }
