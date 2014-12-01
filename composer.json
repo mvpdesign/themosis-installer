@@ -22,5 +22,10 @@
     },
     "config": {
         "bin-dir": "bin"
+    },
+    "autoload": {
+        "psr-4": {
+            "MVPDesign\\ThemosisInstaller\\": "src/MVPDesign/ThemosisInstaller/"
+        }
     }
 }
