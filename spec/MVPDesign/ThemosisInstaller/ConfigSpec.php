@@ -154,4 +154,54 @@ class ConfigSpec extends ObjectBehavior
         $this->setSiteUrl($siteUrl);
         $this->getSiteUrl()->shouldReturn($siteUrl);
     }
+
+    /**
+     * it should return salts
+     *
+     * @return void
+     */
+    public function it_should_return_salts()
+    {
+        $this->getSalts()->shouldbeArray();
+    }
+
+    /**
+     * it should set a salt for keys that do exist
+     *
+     * @return void
+     */
+    public function it_should_set_a_salt_for_keys_that_do_exist()
+    {
+        $keys = array(
+            'AUTH_KEY',
+            'SECURE_AUTH_KEY',
+            'LOGGED_IN_KEY',
+            'NONCE_KEY',
+            'AUTH_SALT',
+            'SECURE_AUTH_SALT',
+            'LOGGED_IN_SALT',
+            'NONCE_SALT'
+        );
+
+        foreach($keys as $key) {
+            $salt = Argument::type('string');
+
+            $this->setSalt($key, $salt);
+            $this->getSalt($key)->shouldReturn($salt);
+        }
+    }
+
+    /**
+     * it should not set a salt for keys that do not exist
+     *
+     * @return void
+     */
+    public function it_should_not_set_a_salt_for_keys_that_do_not_exist()
+    {
+        $key  = 'INVALID_KEY';
+        $salt = Argument::type('string');
+
+        $this->setSalt($key, $salt);
+        $this->getSalt($key)->shouldReturn(false);
+    }
 }

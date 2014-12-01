@@ -47,6 +47,22 @@ class Config
     private $siteUrl = 'http://localhost';
 
     /**
+     * salts
+     *
+     * @var array
+     */
+    private $salts = array(
+        'AUTH_KEY'         => null,
+        'SECURE_AUTH_KEY'  => null,
+        'LOGGED_IN_KEY'    => null,
+        'NONCE_KEY'        => null,
+        'AUTH_SALT'        => null,
+        'SECURE_AUTH_SALT' => null,
+        'LOGGED_IN_SALT'   => null,
+        'NONCE_SALT'       => null
+    );
+
+    /**
      * get the database name
      *
      * @return string
@@ -170,5 +186,46 @@ class Config
     public function setSiteUrl($siteUrl)
     {
         $this->siteUrl = $siteUrl;
+    }
+
+    /**
+     * get salts
+     *
+     * @return string
+     */
+    public function getSalts()
+    {
+        return $this->salts;
+    }
+
+    /**
+     * get a salt
+     *
+     * @param  string $key
+     * @return bool|string
+     */
+    public function getSalt($key)
+    {
+        if ( ! array_key_exists($key, $this->salts)) {
+            return false;
+        }
+
+        return $this->salts[$key];
+    }
+
+    /**
+     * set a salt
+     *
+     * @param string $key
+     * @param string $value
+     * @return bool|void
+     */
+    public function setSalt($key, $value)
+    {
+        if ( ! array_key_exists($key, $this->salts)) {
+            return false;
+        }
+
+        $this->salts[$key] = $value;
     }
 }
