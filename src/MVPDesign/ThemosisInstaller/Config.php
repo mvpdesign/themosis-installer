@@ -231,8 +231,8 @@ class Config
     /**
      * set a salt
      *
-     * @param string $key
-     * @param string $value
+     * @param  string $key
+     * @param  string $value
      * @return bool|void
      */
     public function setSalt($key, $value)
