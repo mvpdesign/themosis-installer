@@ -108,4 +108,27 @@ class ConfigSpec extends ObjectBehavior
         $this->setDbHost($dbHost);
         $this->getDbHost()->shouldReturn($dbHost);
     }
+
+    /**
+     * it should return a environment
+     *
+     * @return void
+     */
+    public function it_should_return_a_environment()
+    {
+        $this->getEnvironment()->shouldReturn('production');
+    }
+
+    /**
+     * it should set a environment
+     *
+     * @return void
+     */
+    public function it_should_set_a_environment()
+    {
+        $environment = Argument::type('string');
+
+        $this->setEnvironment($environment);
+        $this->getEnvironment()->shouldReturn($environment);
+    }
 }

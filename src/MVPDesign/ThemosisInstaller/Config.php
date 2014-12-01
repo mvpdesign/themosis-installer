@@ -33,6 +33,13 @@ class Config
     private $dbHost;
 
     /**
+     * environment
+     *
+     * @var string
+     */
+    private $environment = 'production';
+
+    /**
      * get the database name
      *
      * @return string
@@ -114,5 +121,26 @@ class Config
     public function setDbHost($dbHost)
     {
         $this->dbHost = $dbHost;
+    }
+
+    /**
+     * get the environment
+     *
+     * @return string
+     */
+    public function getEnvironment()
+    {
+        return $this->environment;
+    }
+
+    /**
+     * set the environment
+     *
+     * @param  string $environment
+     * @return void
+     */
+    public function setEnvironment($environment)
+    {
+        $this->environment = $environment;
     }
 }
