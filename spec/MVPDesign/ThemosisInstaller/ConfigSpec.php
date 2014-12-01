@@ -131,4 +131,27 @@ class ConfigSpec extends ObjectBehavior
         $this->setEnvironment($environment);
         $this->getEnvironment()->shouldReturn($environment);
     }
+
+    /**
+     * it should return a site url
+     *
+     * @return void
+     */
+    public function it_should_return_a_site_url()
+    {
+        $this->getSiteUrl()->shouldReturn('http://localhost');
+    }
+
+    /**
+     * it should set a site url
+     *
+     * @return void
+     */
+    public function it_should_set_a_site_url()
+    {
+        $siteUrl = Argument::type('string');
+
+        $this->setSiteUrl($siteUrl);
+        $this->getSiteUrl()->shouldReturn($siteUrl);
+    }
 }

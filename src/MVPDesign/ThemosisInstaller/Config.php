@@ -40,6 +40,13 @@ class Config
     private $environment = 'production';
 
     /**
+     * site url
+     *
+     * @var string
+     */
+    private $siteUrl = 'http://localhost';
+
+    /**
      * get the database name
      *
      * @return string
@@ -142,5 +149,26 @@ class Config
     public function setEnvironment($environment)
     {
         $this->environment = $environment;
+    }
+
+    /**
+     * get the site url
+     *
+     * @return string
+     */
+    public function getSiteUrl()
+    {
+        return $this->siteUrl;
+    }
+
+    /**
+     * set the site url
+     *
+     * @param  string $siteUrl
+     * @return void
+     */
+    public function setSiteUrl($siteUrl)
+    {
+        $this->siteUrl = $siteUrl;
     }
 }
