@@ -24,4 +24,16 @@ class Helper
 
         return $string;
     }
+
+    /**
+     * format a question
+     *
+     * @param  string $question
+     * @param  string $description
+     * @return string
+     */
+    public static function formatQuestion($question = '', $description = '')
+    {
+        return '<info>' . $question . '</info> [<comment>' . $description . '</comment>]: ';
+    }
 }
