@@ -243,6 +243,29 @@ class ConfigSpec extends ObjectBehavior
     }
 
     /**
+     * it should return a admin email
+     *
+     * @return void
+     */
+    public function it_should_return_a_admin_email()
+    {
+        $this->getAdminEmail()->shouldReturn(null);
+    }
+
+    /**
+     * it should set a admin email
+     *
+     * @return void
+     */
+    public function it_should_set_a_admin_email()
+    {
+        $adminEmail = Argument::type('string');
+
+        $this->setAdminEmail($adminEmail);
+        $this->getAdminEmail()->shouldReturn($adminEmail);
+    }
+
+    /**
      * it should return salts
      *
      * @return void

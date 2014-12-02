@@ -81,6 +81,13 @@ class Config
     private $adminPassword;
 
     /**
+     * admin email
+     *
+     * @var string
+     */
+    private $adminEmail;
+
+    /**
      * salts
      *
      * @var array
@@ -300,6 +307,27 @@ class Config
     public function setAdminPassword($adminPassword)
     {
         $this->adminPassword = $adminPassword;
+    }
+
+    /**
+     * get the admin email
+     *
+     * @return string
+     */
+    public function getAdminEmail()
+    {
+        return $this->adminEmail;
+    }
+
+    /**
+     * set the admin email
+     *
+     * @param  string $adminEmail
+     * @return void
+     */
+    public function setAdminEmail($adminEmail)
+    {
+        $this->adminEmail = $adminEmail;
     }
 
     /**
