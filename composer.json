@@ -1,0 +1,34 @@
+{
+    "name": "mvpdesign/themosis-installer",
+    "description": "Themosis installer",
+    "keywords": [
+        "themosis", "installer", "composer"
+    ],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Brock Riemenschneider",
+            "email": "brock@mvpdesign.com",
+            "homepage": "https://github.com/BsWiM"
+        }
+    ],
+    "require-dev": {
+        "phpspec/phpspec": "~2.0",
+        "mockery/mockery": "~0.9",
+        "composer/composer": "1.0.*@dev"
+    },
+    "require": {
+        "php": ">=5.3.4",
+        "wp-cli/wp-cli": "~0.17",
+        "symfony/process": "~2.6"
+    },
+    "config": {
+        "bin-dir": "bin"
+    },
+    "autoload": {
+        "psr-4": {
+            "MVPDesign\\ThemosisInstaller\\": "src/MVPDesign/ThemosisInstaller/"
+        }
+    }
+}

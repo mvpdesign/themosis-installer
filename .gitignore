@@ -1,0 +1,11 @@
+### Miscellaneous
+.DS_Store
+Thumbs.db
+
+### Composer
+composer.lock
+/vendor/
+/bin/
+
+### IDE
+.idea/
