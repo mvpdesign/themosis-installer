@@ -197,6 +197,29 @@ class ConfigSpec extends ObjectBehavior
     }
 
     /**
+     * it should return a admin user
+     *
+     * @return void
+     */
+    public function it_should_return_a_admin_user()
+    {
+        $this->getAdminUser()->shouldReturn(null);
+    }
+
+    /**
+     * it should set a admin user
+     *
+     * @return void
+     */
+    public function it_should_set_a_admin_user()
+    {
+        $adminUser = Argument::type('string');
+
+        $this->setAdminUser($adminUser);
+        $this->getAdminUser()->shouldReturn($adminUser);
+    }
+
+    /**
      * it should return salts
      *
      * @return void

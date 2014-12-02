@@ -67,6 +67,13 @@ class Config
     private $siteTitle;
 
     /**
+     * admin user
+     *
+     * @var string
+     */
+    private $adminUser;
+
+    /**
      * salts
      *
      * @var array
@@ -244,6 +251,27 @@ class Config
     public function setSiteTitle($siteTitle)
     {
         $this->siteTitle = $siteTitle;
+    }
+
+    /**
+     * get the admin user
+     *
+     * @return string
+     */
+    public function getAdminUser()
+    {
+        return $this->adminUser;
+    }
+
+    /**
+     * set the admin user
+     *
+     * @param  string $adminUser
+     * @return void
+     */
+    public function setAdminUser($adminUser)
+    {
+        $this->adminUser = $adminUser;
     }
 
     /**
