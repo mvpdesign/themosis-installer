@@ -39,7 +39,7 @@ class ThemosisSpec extends ObjectBehavior
      */
     public function it_should_return_the_config()
     {
-        $this->getConfig()->shouldReturnAnInstanceOf('\MVPDesign\ThemosisInstaller\config');
+        $this->getConfig()->shouldReturnAnInstanceOf('\MVPDesign\ThemosisInstaller\Config');
     }
 
     /**
