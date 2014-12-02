@@ -301,4 +301,23 @@ class Themosis
 
         echo $process->getOutput();
     }
+
+    /**
+     * activate the wordpress theme
+     *
+     * @return void
+     */
+    private function activateWordPressTheme()
+    {
+        $command  = 'bin/wp theme activate ' . $this->getTheme();
+
+        $process = new Process($command);
+        $process->run();
+
+        if (! $process->isSuccessful()) {
+            throw new \RuntimeException($process->getErrorOutput());
+        }
+
+        echo $process->getOutput();
+    }
 }
