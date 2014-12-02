@@ -131,4 +131,35 @@ class Themosis
 
         $this->io->write('Generated WordPress salts.');
     }
+
+    /**
+     * create the env.environment.php file
+     *
+     * @return void
+     */
+    private function createEnvironmentFile()
+    {
+        $config = $this->getConfig();
+
+        // load the environment file template
+        $envTemplateFileName = ".env.template.php";
+        $envTemplate         = file_get_contents($envTemplateFileName);
+
+        // inject the environment variables
+        $envTemplate = str_replace('$ENVIRONMENT', ucfirst(strtolower($config->getEnvironment())), $envTemplate);
+        $envTemplate = str_replace('$DB_NAME', $config->getDbName(), $envTemplate);
+        $envTemplate = str_replace('$DB_USER', $config->getDbUser(), $envTemplate);
+        $envTemplate = str_replace('$DB_PASSWORD', $config->getDbPassword(), $envTemplate);
+        $envTemplate = str_replace('$DB_HOST', $config->getDbHost(), $envTemplate);
+        $envTemplate = str_replace('$WP_SITEURL', $config->getSiteUrl(), $envTemplate);
+        foreach ($config->getSalts() as $saltKey => $saltValue) {
+            $envTemplate = str_replace('$' . $saltKey, $saltValue, $envTemplate);
+        }
+
+        // create the environment file
+        $envFileName = '.env.' . strtolower($config->getEnvironment()) . '.php';
+        file_put_contents($envFileName, $envTemplate, LOCK_EX);
+
+        $this->io->write('Created the environment file.');
+    }
 }
