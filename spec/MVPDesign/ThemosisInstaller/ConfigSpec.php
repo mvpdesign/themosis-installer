@@ -174,6 +174,29 @@ class ConfigSpec extends ObjectBehavior
     }
 
     /**
+     * it should return a site title
+     *
+     * @return void
+     */
+    public function it_should_return_a_site_title()
+    {
+        $this->getSiteTitle()->shouldReturn(null);
+    }
+
+    /**
+     * it should set a site title
+     *
+     * @return void
+     */
+    public function it_should_set_a_site_title()
+    {
+        $siteTitle = Argument::type('string');
+
+        $this->setSiteTitle($siteTitle);
+        $this->getSiteTitle()->shouldReturn($siteTitle);
+    }
+
+    /**
      * it should return salts
      *
      * @return void

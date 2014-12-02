@@ -60,6 +60,13 @@ class Config
     private $siteUrl = 'http://localhost';
 
     /**
+     * site title
+     *
+     * @var string
+     */
+    private $siteTitle;
+
+    /**
      * salts
      *
      * @var array
@@ -216,6 +223,27 @@ class Config
     public function setSiteUrl($siteUrl)
     {
         $this->siteUrl = $siteUrl;
+    }
+
+    /**
+     * get the site title
+     *
+     * @return string
+     */
+    public function getSiteTitle()
+    {
+        return $this->siteTitle;
+    }
+
+    /**
+     * set the site title
+     *
+     * @param  string $siteTitle
+     * @return void
+     */
+    public function setSiteTitle($siteTitle)
+    {
+        $this->siteTitle = $siteTitle;
     }
 
     /**
