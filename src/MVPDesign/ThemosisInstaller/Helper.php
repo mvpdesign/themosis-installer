@@ -2,6 +2,10 @@
 
 namespace MVPDesign\ThemosisInstaller;
 
+use MVPDesign\ThemosisInstaller\InvalidStringLengthException;
+use MVPDesign\ThemosisInstaller\InvalidEmailException;
+use MVPDesign\ThemosisInstaller\InvalidURLException;
+
 class Helper
 {
     /**
@@ -35,5 +39,47 @@ class Helper
     public static function formatQuestion($question = '', $description = '')
     {
         return '<info>' . $question . '</info> [<comment>' . $description . '</comment>]: ';
+    }
+
+    /**
+     * validate string
+     *
+     * @return void
+     */
+    public static function validateString($string)
+    {
+        if (strlen($string) == 0) {
+            throw new InvalidStringLengthException('The string must have a length greater than 0.');
+        }
+
+        return $string;
+    }
+
+    /**
+     * validate email
+     *
+     * @return void
+     */
+    public static function validateEmail($email)
+    {
+        if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new InvalidEmailException('The email is not valid.');
+        }
+
+        return $email;
+    }
+
+    /**
+     * validate url
+     *
+     * @return void
+     */
+    public static function validateURL($url)
+    {
+        if (! filter_var($url, FILTER_VALIDATE_URL)) {
+            throw new InvalidURLException('The url is not valid.');
+        }
+
+        return $url;
     }
 }
