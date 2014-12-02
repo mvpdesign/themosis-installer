@@ -269,4 +269,36 @@ class Themosis
 
         $this->io->write('Created the environment file.');
     }
+
+    /**
+     * install the wordpress database
+     *
+     * @return void
+     */
+    private function installWordPress()
+    {
+        $config = $this->getConfig();
+
+        $siteUrl       = Helper::validateURL($config->getSiteUrl());
+        $siteTitle     = Helper::validateString($config->getSiteTitle());
+        $adminUser     = Helper::validateString($config->getAdminUser());
+        $adminPassword = Helper::validateString($config->getAdminPassword());
+        $adminEmail    = Helper::validateEmail($config->getAdminEmail());
+
+        $command  = 'bin/wp core install';
+        $command .= ' --url=' . $siteUrl;
+        $command .= ' --title=' . $siteTitle;
+        $command .= ' --admin_user=' . $adminUser;
+        $command .= ' --admin_password=' . $adminPassword;
+        $command .= ' --admin_email=' . $adminEmail;
+
+        $process = new Process($command);
+        $process->run();
+
+        if (! $process->isSuccessful()) {
+            throw new \RuntimeException($process->getErrorOutput());
+        }
+
+        echo $process->getOutput();
+    }
 }
