@@ -28,6 +28,13 @@ class Themosis
     private $theme = 'themosis-theme';
 
     /**
+     * generating salts
+     *
+     * @var bool
+     */
+    private $generatingSalts = true;
+
+    /**
      * constructor
      */
     public function __construct(IOInterface $io)
@@ -57,5 +64,26 @@ class Themosis
     public function getTheme()
     {
         return $this->theme;
+    }
+
+    /**
+     * is generating salts
+     *
+     * @return bool
+     */
+    public function isGeneratingSalts()
+    {
+        return $this->generatingSalts;
+    }
+
+    /**
+     * set generating salts
+     *
+     * @param  bool $generatingSalts
+     * @return void
+     */
+    public function setGeneratingSalts($generatingSalts)
+    {
+        $this->generatingSalts = $generatingSalts;
     }
 }

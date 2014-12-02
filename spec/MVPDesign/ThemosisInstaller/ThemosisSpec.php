@@ -51,4 +51,27 @@ class ThemosisSpec extends ObjectBehavior
     {
         $this->getTheme()->shouldReturn('themosis-theme');
     }
+
+    /**
+     * it should return is generating salts
+     *
+     * @return void
+     */
+    public function it_should_return_is_generating_salts()
+    {
+        $this->isGeneratingSalts()->shouldReturn(true);
+    }
+
+    /**
+     * it should set generating salts
+     *
+     * @return void
+     */
+    public function it_should_set_set_generating_salts()
+    {
+        $isGeneratingSalts = false;
+
+        $this->setGeneratingSalts($isGeneratingSalts);
+        $this->isGeneratingSalts()->shouldReturn($isGeneratingSalts);
+    }
 }
