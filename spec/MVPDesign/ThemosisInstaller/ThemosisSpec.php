@@ -67,7 +67,7 @@ class ThemosisSpec extends ObjectBehavior
      *
      * @return void
      */
-    public function it_should_set_set_generating_wordpress_salts()
+    public function it_should_set_generating_wordpress_salts()
     {
         $isGeneratingWordPressSalts = false;
 
@@ -90,7 +90,7 @@ class ThemosisSpec extends ObjectBehavior
      *
      * @return void
      */
-    public function it_should_set_set_installing_wordpress()
+    public function it_should_set_installing_wordpress()
     {
         $isInstallingWordPress = false;
 
