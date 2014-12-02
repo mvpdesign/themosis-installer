@@ -98,4 +98,13 @@ class ThemosisSpec extends ObjectBehavior
         $this->isInstallingWordPress()->shouldReturn($isInstallingWordPress);
     }
 
+    /**
+     * it should install
+     *
+     * @return void
+     */
+    public function it_should_install()
+    {
+        $this->install()->shouldReturn(null);
+    }
 }
