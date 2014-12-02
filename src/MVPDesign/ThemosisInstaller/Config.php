@@ -219,7 +219,7 @@ class Config
     public static function validateEnvironment($environment)
     {
         if (! in_array($environment, Config::$environments)) {
-            throw new InvalidEnvironmentException('Valid environments are: ' . implode(', ', Config::$environments));
+            throw new InvalidEnvironmentException('Valid environments are: ' . implode(', ', Config::$environments) . '.');
         }
 
         return $environment;
