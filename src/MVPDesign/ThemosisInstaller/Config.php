@@ -348,7 +348,7 @@ class Config
      */
     public function getSalt($key)
     {
-        if ( ! array_key_exists($key, $this->salts)) {
+        if (! array_key_exists($key, $this->salts)) {
             return false;
         }
 
@@ -364,7 +364,7 @@ class Config
      */
     public function setSalt($key, $value)
     {
-        if ( ! array_key_exists($key, $this->salts)) {
+        if (! array_key_exists($key, $this->salts)) {
             return false;
         }
 
