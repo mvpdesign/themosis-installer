@@ -220,6 +220,14 @@ class Themosis
         // create the env.environment.php file
         $this->createEnvironmentFile();
 
+        if ($this->isInstallingWordpress()) {
+            // install the wordpress database
+            $this->installWordpress();
+
+            // activate the wordpress theme
+            $this->activateWordPressTheme();
+        }
+
         $this->io->write('Themosis installation complete.');
     }
 
