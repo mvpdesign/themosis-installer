@@ -117,6 +117,24 @@ class Themosis
     }
 
     /**
+     * runs the installation process
+     *
+     * @return void
+     */
+    public function install()
+    {
+        // generate wordpress salts
+        if ($this->isGeneratingWordPressSalts()) {
+            $this->generateWordPressSalts();
+        }
+
+        // create the env.environment.php file
+        $this->createEnvironmentFile();
+
+        $this->io->write('Installation complete.');
+    }
+
+    /**
      * generate wordpress salts
      *
      * @return void
