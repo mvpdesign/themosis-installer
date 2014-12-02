@@ -19,7 +19,9 @@
         "composer/composer": "1.0.*@dev"
     },
     "require": {
-        "php": ">=5.3.4"
+        "php": ">=5.3.4",
+        "wp-cli/wp-cli": "~0.17",
+        "symfony/process": "~2.6"
     },
     "config": {
         "bin-dir": "bin"
