@@ -197,21 +197,21 @@ class ConfigSpec extends ObjectBehavior
     }
 
     /**
-     * it should return a admin user
+     * it should return an admin user
      *
      * @return void
      */
-    public function it_should_return_a_admin_user()
+    public function it_should_return_an_admin_user()
     {
         $this->getAdminUser()->shouldReturn(null);
     }
 
     /**
-     * it should set a admin user
+     * it should set an admin user
      *
      * @return void
      */
-    public function it_should_set_a_admin_user()
+    public function it_should_set_an_admin_user()
     {
         $adminUser = Argument::type('string');
 
@@ -220,21 +220,21 @@ class ConfigSpec extends ObjectBehavior
     }
 
     /**
-     * it should return a admin password
+     * it should return an admin password
      *
      * @return void
      */
-    public function it_should_return_a_admin_password()
+    public function it_should_return_an_admin_password()
     {
         $this->getAdminPassword()->shouldReturn(null);
     }
 
     /**
-     * it should set a admin password
+     * it should set an admin password
      *
      * @return void
      */
-    public function it_should_set_a_admin_password()
+    public function it_should_set_an_admin_password()
     {
         $adminPassword = Argument::type('string');
 
@@ -243,21 +243,21 @@ class ConfigSpec extends ObjectBehavior
     }
 
     /**
-     * it should return a admin email
+     * it should return an admin email
      *
      * @return void
      */
-    public function it_should_return_a_admin_email()
+    public function it_should_return_an_admin_email()
     {
         $this->getAdminEmail()->shouldReturn(null);
     }
 
     /**
-     * it should set a admin email
+     * it should set an admin email
      *
      * @return void
      */
-    public function it_should_set_a_admin_email()
+    public function it_should_set_an_admin_email()
     {
         $adminEmail = Argument::type('string');
 
