@@ -3,6 +3,7 @@
 namespace MVPDesign\ThemosisInstaller;
 
 use Composer\IO\IOInterface;
+use MVPDesign\ThemosisInstaller\Helper;
 
 class Themosis
 {
@@ -113,5 +114,21 @@ class Themosis
     public function setInstallingWordPress($installingWordPress)
     {
         $this->installingWordPress = $installingWordPress;
+    }
+
+    /**
+     * generate wordpress salts
+     *
+     * @return void
+     */
+    private function generateWordPressSalts()
+    {
+        $config = $this->getConfig();
+
+        foreach ($config->getSalts() as $saltKey => $saltValue) {
+            $config->setSalt($saltKey, Helper::generateRandomString());
+        }
+
+        $this->io->write('Generated WordPress salts.');
     }
 }
