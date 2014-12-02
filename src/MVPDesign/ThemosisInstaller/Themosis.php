@@ -35,6 +35,13 @@ class Themosis
     private $generatingSalts = true;
 
     /**
+     * install wordpress
+     *
+     * @var bool
+     */
+    private $installingWordPress = true;
+
+    /**
      * constructor
      */
     public function __construct(IOInterface $io)
@@ -85,5 +92,26 @@ class Themosis
     public function setGeneratingSalts($generatingSalts)
     {
         $this->generatingSalts = $generatingSalts;
+    }
+
+    /**
+     * is installing wordpress
+     *
+     * @return bool
+     */
+    public function isInstallingWordPress()
+    {
+        return $this->installingWordPress;
+    }
+
+    /**
+     * set installing wordpress
+     *
+     * @param  bool $installingWordPress
+     * @return void
+     */
+    public function setInstallingWordPress($installingWordPress)
+    {
+        $this->installingWordPress = $installingWordPress;
     }
 }

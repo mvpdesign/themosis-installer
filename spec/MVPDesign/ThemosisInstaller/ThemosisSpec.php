@@ -74,4 +74,28 @@ class ThemosisSpec extends ObjectBehavior
         $this->setGeneratingSalts($isGeneratingSalts);
         $this->isGeneratingSalts()->shouldReturn($isGeneratingSalts);
     }
+
+    /**
+     * it should return is installing wordpress
+     *
+     * @return void
+     */
+    public function it_should_return_is_installing_wordpress()
+    {
+        $this->isInstallingWordPress()->shouldReturn(true);
+    }
+
+    /**
+     * it should set installing wordpress
+     *
+     * @return void
+     */
+    public function it_should_set_set_installing_wordpress()
+    {
+        $isInstallingWordPress = false;
+
+        $this->setInstallingWordPress($isInstallingWordPress);
+        $this->isInstallingWordPress()->shouldReturn($isInstallingWordPress);
+    }
+
 }
