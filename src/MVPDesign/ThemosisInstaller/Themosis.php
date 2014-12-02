@@ -29,11 +29,11 @@ class Themosis
     private $theme = 'themosis-theme';
 
     /**
-     * generating salts
+     * generating wordpress salts
      *
      * @var bool
      */
-    private $generatingSalts = true;
+    private $generatingWordPressSalts = true;
 
     /**
      * install wordpress
@@ -75,24 +75,24 @@ class Themosis
     }
 
     /**
-     * is generating salts
+     * is generating wordpress salts
      *
      * @return bool
      */
-    public function isGeneratingSalts()
+    public function isGeneratingWordPressSalts()
     {
-        return $this->generatingSalts;
+        return $this->generatingWordPressSalts;
     }
 
     /**
-     * set generating salts
+     * set generating wordpress salts
      *
-     * @param  bool $generatingSalts
+     * @param  bool $generatingWordPressSalts
      * @return void
      */
-    public function setGeneratingSalts($generatingSalts)
+    public function setGeneratingWordPressSalts($generatingWordPressSalts)
     {
-        $this->generatingSalts = $generatingSalts;
+        $this->generatingWordPressSalts = $generatingWordPressSalts;
     }
 
     /**

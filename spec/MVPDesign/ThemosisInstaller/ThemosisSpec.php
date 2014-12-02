@@ -53,26 +53,26 @@ class ThemosisSpec extends ObjectBehavior
     }
 
     /**
-     * it should return is generating salts
+     * it should return is generating wordpress salts
      *
      * @return void
      */
-    public function it_should_return_is_generating_salts()
+    public function it_should_return_is_generating_wordpress_salts()
     {
-        $this->isGeneratingSalts()->shouldReturn(true);
+        $this->isGeneratingWordPressSalts()->shouldReturn(true);
     }
 
     /**
-     * it should set generating salts
+     * it should set generating wordpress salts
      *
      * @return void
      */
-    public function it_should_set_set_generating_salts()
+    public function it_should_set_set_generating_wordpress_salts()
     {
-        $isGeneratingSalts = false;
+        $isGeneratingWordPressSalts = false;
 
-        $this->setGeneratingSalts($isGeneratingSalts);
-        $this->isGeneratingSalts()->shouldReturn($isGeneratingSalts);
+        $this->setGeneratingWordPressSalts($isGeneratingWordPressSalts);
+        $this->isGeneratingWordPressSalts()->shouldReturn($isGeneratingWordPressSalts);
     }
 
     /**
