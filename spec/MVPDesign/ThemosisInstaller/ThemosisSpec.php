@@ -15,11 +15,21 @@ class ThemosisSpec extends ObjectBehavior
      */
     public function let()
     {
-        $io = Mockery::mock('Composer\IO\BaseIO')
-            ->shouldReceive('isInteractive', 'write')
-            ->andReturn(false)->getMock();
+        $io = Mockery::mock('Composer\IO\BaseIO');
+        $io->shouldReceive('isInteractive')
+           ->andReturn(false);
+        $io->shouldReceive('write')
+           ->andReturn(false);
 
-        $this->beConstructedWith($io);
+        $composer = Mockery::mock('Composer\Composer');
+
+        $event = Mockery::mock('Composer\Script\Event');
+        $event->shouldReceive('getIO')
+              ->andReturn($io);
+        $event->shouldReceive('getComposer')
+              ->andReturn($composer);
+
+        $this->beConstructedWith($event);
     }
 
     /**
@@ -30,6 +40,26 @@ class ThemosisSpec extends ObjectBehavior
     public function it_is_initializable()
     {
         $this->shouldHaveType('MVPDesign\ThemosisInstaller\Themosis');
+    }
+
+    /**
+     * it should return the io
+     *
+     * @return void
+     */
+    public function it_should_return_the_io()
+    {
+        $this->getIO()->shouldReturnAnInstanceOf('\Composer\IO\BaseIO');
+    }
+
+    /**
+     * it should return composer
+     *
+     * @return void
+     */
+    public function it_should_return_composer()
+    {
+        $this->getComposer()->shouldReturnAnInstanceOf('\Composer\Composer');
     }
 
     /**

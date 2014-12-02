@@ -15,9 +15,7 @@ class Hooks
      */
     public static function themosis(Event $event)
     {
-        $io = $event->getIO();
-
-        $themosis = new Themosis($io);
+        $themosis = new Themosis($event);
         $themosis->askConfigQuestions();
         $themosis->install();
     }

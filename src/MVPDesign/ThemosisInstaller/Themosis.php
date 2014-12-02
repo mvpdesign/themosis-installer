@@ -2,7 +2,9 @@
 
 namespace MVPDesign\ThemosisInstaller;
 
+use Composer\Script\Event;
 use Composer\IO\IOInterface;
+use Composer\Composer;
 use Symfony\Component\Process\Process;
 use MVPDesign\ThemosisInstaller\Config;
 use MVPDesign\ThemosisInstaller\Helper;
@@ -10,11 +12,11 @@ use MVPDesign\ThemosisInstaller\Helper;
 class Themosis
 {
     /**
-     * io interface
+     * event
      *
-     * @var IOInterface
+     * @var Event
      */
-    private $io;
+    private $event;
 
     /**
      * config
@@ -47,9 +49,29 @@ class Themosis
     /**
      * constructor
      */
-    public function __construct(IOInterface $io)
+    public function __construct(Event $event)
     {
-        $this->io = $io;
+        $this->event = $event;
+    }
+
+    /**
+     * get the io
+     *
+     * @return IOInterface
+     */
+    public function getIO()
+    {
+        return $this->event->getIO();
+    }
+
+    /**
+     * get composer
+     *
+     * @return Composer
+     */
+    public function getComposer()
+    {
+        return $this->event->getComposer();
     }
 
     /**
@@ -126,50 +148,51 @@ class Themosis
     public function askConfigQuestions()
     {
         $config = $this->getConfig();
+        $io     = $this->getIO();
 
-        if ($this->io->isInteractive()) {
+        if ($io->isInteractive()) {
             // get answers to our questions
-            $dbName = $this->io->askAndValidate(
+            $dbName = $io->askAndValidate(
                 Helper::formatQuestion('Database name', $config->getDbName()),
                 "MVPDesign\ThemosisInstaller\Helper::validateString",
                 false,
                 $config->getDbName()
             );
-            $dbUser = $this->io->askAndValidate(
+            $dbUser = $io->askAndValidate(
                 Helper::formatQuestion('Database user', $config->getDbUser()),
                 "MVPDesign\ThemosisInstaller\Helper::validateString",
                 false,
                 $config->getDbUser()
             );
-            $dbPassword = $this->io->askAndValidate(
+            $dbPassword = $io->askAndValidate(
                 Helper::formatQuestion('Database passsword', $config->getDbPassword()),
                 "MVPDesign\ThemosisInstaller\Helper::validateString",
                 false,
                 $config->getDbPassword()
             );
-            $dbHost = $this->io->askAndValidate(
+            $dbHost = $io->askAndValidate(
                 Helper::formatQuestion('Database host', $config->getDbHost()),
                 "MVPDesign\ThemosisInstaller\Helper::validateString",
                 false,
                 $config->getDbHost()
             );
-            $environment = $this->io->askAndValidate(
+            $environment = $io->askAndValidate(
                 Helper::formatQuestion('Environment', $config->getEnvironment()),
                 "MVPDesign\ThemosisInstaller\Config::validateEnvironment",
                 false,
                 $config->getEnvironment()
             );
-            $siteUrl = $this->io->askAndValidate(
+            $siteUrl = $io->askAndValidate(
                 Helper::formatQuestion('Site URL', $config->getSiteUrl()),
                 "MVPDesign\ThemosisInstaller\Helper::validateURL",
                 false,
                 $config->getSiteUrl()
             );
-            $generatingWordPressSalts = $this->io->askConfirmation(
+            $generatingWordPressSalts = $io->askConfirmation(
                 Helper::formatQuestion('Generate WordPress Salts', $this->isGeneratingWordPressSalts() ? 'y' : 'n'),
                 $this->isGeneratingWordPressSalts()
             );
-            $installingWordpress = $this->io->askConfirmation(
+            $installingWordpress = $io->askConfirmation(
                 Helper::formatQuestion('Install WordPress', $this->isInstallingWordPress() ? 'y' : 'n'),
                 $this->isInstallingWordPress()
             );
@@ -187,28 +210,28 @@ class Themosis
 
             // extra questions if installing wordpress
             if ($installingWordpress == 'y') {
-                $siteTitle = $this->io->askAndValidate(
+                $siteTitle = $io->askAndValidate(
                     Helper::formatQuestion('Site Title', $config->getSiteTitle()),
                     "MVPDesign\ThemosisInstaller\Helper::validateString",
                     false,
                     $config->getSiteTitle()
                 );
 
-                $adminUser = $this->io->askAndValidate(
+                $adminUser = $io->askAndValidate(
                     Helper::formatQuestion('Admin User', $config->getAdminUser()),
                     "MVPDesign\ThemosisInstaller\Helper::validateString",
                     false,
                     $config->getAdminUser()
                 );
 
-                $adminPassword = $this->io->askAndValidate(
+                $adminPassword = $io->askAndValidate(
                     Helper::formatQuestion('Admin Password', $config->getAdminPassword()),
                     "MVPDesign\ThemosisInstaller\Helper::validateString",
                     false,
                     $config->getAdminPassword()
                 );
 
-                $adminEmail = $this->io->askAndValidate(
+                $adminEmail = $io->askAndValidate(
                     Helper::formatQuestion('Admin Email', $config->getAdminEmail()),
                     "MVPDesign\ThemosisInstaller\Helper::validateEmail",
                     false,
@@ -231,6 +254,8 @@ class Themosis
      */
     public function install()
     {
+        $io = $this->getIO();
+
         // generate wordpress salts
         if ($this->isGeneratingWordPressSalts()) {
             $this->generateWordPressSalts();
@@ -247,7 +272,7 @@ class Themosis
             $this->activateWordPressTheme();
         }
 
-        $this->io->write('Themosis installation complete.');
+        $io->write('Themosis installation complete.');
     }
 
     /**
@@ -258,12 +283,13 @@ class Themosis
     private function generateWordPressSalts()
     {
         $config = $this->getConfig();
+        $io     = $this->getIO();
 
         foreach ($config->getSalts() as $saltKey => $saltValue) {
             $config->setSalt($saltKey, Helper::generateRandomString());
         }
 
-        $this->io->write('Generated WordPress salts.');
+        $io->write('Generated WordPress salts.');
     }
 
     /**
@@ -274,10 +300,11 @@ class Themosis
     private function createEnvironmentFile()
     {
         $config = $this->getConfig();
+        $io     = $this->getIO();
 
         // load the environment file template
-        $envTemplateFileName = ".env.template.php";
-        $envTemplate         = file_get_contents($envTemplateFileName);
+        $envTemplateFilePath = $this->getCWD() . ".env.template.php";
+        $envTemplate         = file_get_contents($envTemplateFilePath);
 
         // inject the environment variables
         $envTemplate = str_replace('$ENVIRONMENT', ucfirst(strtolower($config->getEnvironment())), $envTemplate);
@@ -294,7 +321,7 @@ class Themosis
         $envFileName = '.env.' . strtolower($config->getEnvironment()) . '.php';
         file_put_contents($envFileName, $envTemplate, LOCK_EX);
 
-        $this->io->write('Created the environment file.');
+        $io->write('Created the environment file.');
     }
 
     /**
@@ -312,7 +339,7 @@ class Themosis
         $adminPassword = Helper::validateString($config->getAdminPassword());
         $adminEmail    = Helper::validateEmail($config->getAdminEmail());
 
-        $command  = 'bin/wp core install';
+        $command  = $this->getBinDirectory() . 'wp core install';
         $command .= ' --url=' . $siteUrl;
         $command .= ' --title=' . $siteTitle;
         $command .= ' --admin_user=' . $adminUser;
@@ -336,7 +363,7 @@ class Themosis
      */
     private function activateWordPressTheme()
     {
-        $command  = 'bin/wp theme activate ' . $this->getTheme();
+        $command  = $this->getBinDirectory() . 'wp theme activate ' . $this->getTheme();
 
         $process = new Process($command);
         $process->run();
@@ -346,5 +373,28 @@ class Themosis
         }
 
         echo $process->getOutput();
+    }
+
+    /**
+     * return the composer bin directory
+     *
+     * @return void
+     */
+    private function getBinDirectory()
+    {
+        $composer       = $this->getComposer();
+        $composerConfig = $composer->getConfig();
+
+        return $composerConfig->get('bin-dir') . '/';
+    }
+
+    /**
+     * return the current working directory
+     *
+     * @return void
+     */
+    private function getCWD()
+    {
+        return dirname(__FILE__) . "/../../../";
     }
 }
