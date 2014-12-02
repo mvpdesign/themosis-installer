@@ -21,6 +21,13 @@ class Themosis
     private $config;
 
     /**
+     * theme
+     *
+     * @var string
+     */
+    private $theme = 'themosis-theme';
+
+    /**
      * constructor
      */
     public function __construct(IOInterface $io)
@@ -40,5 +47,15 @@ class Themosis
         }
 
         return $this->config;
+    }
+
+    /**
+     * get the theme
+     *
+     * @return string
+     */
+    public function getTheme()
+    {
+        return $this->theme;
     }
 }

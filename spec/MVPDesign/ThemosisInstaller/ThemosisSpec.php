@@ -41,4 +41,14 @@ class ThemosisSpec extends ObjectBehavior
     {
         $this->getConfig()->shouldReturnAnInstanceOf('\MVPDesign\ThemosisInstaller\config');
     }
+
+    /**
+     * it should return the theme
+     *
+     * @return void
+     */
+    public function it_should_return_the_theme()
+    {
+        $this->getTheme()->shouldReturn('themosis-theme');
+    }
 }
