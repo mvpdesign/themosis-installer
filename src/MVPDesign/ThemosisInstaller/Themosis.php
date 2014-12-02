@@ -303,8 +303,8 @@ class Themosis
         $io     = $this->getIO();
 
         // load the environment file template
-        $envTemplateFileName = ".env.template.php";
-        $envTemplate         = file_get_contents($envTemplateFileName);
+        $envTemplateFilePath = $this->getCWD() . ".env.template.php";
+        $envTemplate         = file_get_contents($envTemplateFilePath);
 
         // inject the environment variables
         $envTemplate = str_replace('$ENVIRONMENT', ucfirst(strtolower($config->getEnvironment())), $envTemplate);
@@ -339,7 +339,7 @@ class Themosis
         $adminPassword = Helper::validateString($config->getAdminPassword());
         $adminEmail    = Helper::validateEmail($config->getAdminEmail());
 
-        $command  = 'bin/wp core install';
+        $command  = $this->getBinDirectory() . 'wp core install';
         $command .= ' --url=' . $siteUrl;
         $command .= ' --title=' . $siteTitle;
         $command .= ' --admin_user=' . $adminUser;
@@ -363,7 +363,7 @@ class Themosis
      */
     private function activateWordPressTheme()
     {
-        $command  = 'bin/wp theme activate ' . $this->getTheme();
+        $command  = $this->getBinDirectory() . 'wp theme activate ' . $this->getTheme();
 
         $process = new Process($command);
         $process->run();
@@ -373,5 +373,28 @@ class Themosis
         }
 
         echo $process->getOutput();
+    }
+
+    /**
+     * return the composer bin directory
+     *
+     * @return void
+     */
+    private function getBinDirectory()
+    {
+        $composer       = $this->getComposer();
+        $composerConfig = $composer->getConfig();
+
+        return $composerConfig->get('bin-dir') . '/';
+    }
+
+    /**
+     * return the current working directory
+     *
+     * @return void
+     */
+    private function getCWD()
+    {
+        return dirname(__FILE__) . "/../../../";
     }
 }
