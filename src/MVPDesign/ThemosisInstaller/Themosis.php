@@ -118,6 +118,94 @@ class Themosis
     }
 
     /**
+     * ask configuration questions
+     *
+     * @return void
+     */
+    public function askConfigQuestions()
+    {
+        $config = $this->getConfig();
+
+        if ($this->io->isInteractive()) {
+            // get answers to our questions
+            $dbName = $this->io->ask(
+                Helper::formatQuestion('Database name', $config->getDbName()),
+                $config->getDbName()
+            );
+            $dbUser = $this->io->ask(
+                Helper::formatQuestion('Database user', $config->getDbUser()),
+                $config->getDbUser()
+            );
+            $dbPassword = $this->io->ask(
+                Helper::formatQuestion('Database passsword', $config->getDbPassword()),
+                $config->getDbPassword()
+            );
+            $dbHost = $this->io->ask(
+                Helper::formatQuestion('Database host', $config->getDbHost()),
+                $config->getDbHost()
+            );
+            $environment = $this->io->askAndValidate(
+                Helper::formatQuestion('Environment', $config->getEnvironment()),
+                "MVPDesign\ThemosisInstaller\Config::validateEnvironment",
+                false,
+                $config->getEnvironment()
+            );
+            $siteUrl = $this->io->ask(
+                Helper::formatQuestion('Site URL', $config->getSiteUrl()),
+                $config->getSiteUrl()
+            );
+            $generatingWordPressSalts = $this->io->askConfirmation(
+                Helper::formatQuestion('Generate WordPress Salts', $this->isGeneratingWordPressSalts() ? 'y' : 'n'),
+                $this->isGeneratingWordPressSalts()
+            );
+            $installingWordpress = $this->io->askConfirmation(
+                Helper::formatQuestion('Install WordPress', $this->isInstallingWordPress() ? 'y' : 'n'),
+                $this->isInstallingWordPress()
+            );
+
+            // save the answers
+            $config->setDbName($dbName);
+            $config->setDbUser($dbUser);
+            $config->setDbPassword($dbPassword);
+            $config->setDbHost($dbHost);
+            $config->setSiteUrl($siteUrl);
+            $config->setEnvironment($environment);
+
+            $this->setGeneratingWordPressSalts($generatingWordPressSalts == 'y' ? true : false);
+            $this->setInstallingWordpress($installingWordpress == 'y' ? true : false);
+
+            // extra questions if installing wordpress
+            if ($installingWordpress == 'y') {
+                $siteTitle = $this->io->ask(
+                    Helper::formatQuestion('Site Title', $config->getSiteTitle()),
+                    $config->getSiteTitle()
+                );
+
+                $adminUser = $this->io->ask(
+                    Helper::formatQuestion('Admin User', $config->getAdminUser()),
+                    $config->getAdminUser()
+                );
+
+                $adminPassword = $this->io->ask(
+                    Helper::formatQuestion('Admin Password', $config->getAdminPassword()),
+                    $config->getAdminPassword()
+                );
+
+                $adminEmail = $this->io->ask(
+                    Helper::formatQuestion('Admin Email', $config->getAdminEmail()),
+                    $config->getAdminEmail()
+                );
+
+                // save the answers
+                $config->setSiteTitle($siteTitle);
+                $config->setAdminUser($adminUser);
+                $config->setAdminPassword($adminPassword);
+                $config->setAdminEmail($adminEmail);
+            }
+        }
+    }
+
+    /**
      * runs the installation process
      *
      * @return void
@@ -132,7 +220,7 @@ class Themosis
         // create the env.environment.php file
         $this->createEnvironmentFile();
 
-        $this->io->write('Installation complete.');
+        $this->io->write('Themosis installation complete.');
     }
 
     /**

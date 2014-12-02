@@ -107,4 +107,14 @@ class ThemosisSpec extends ObjectBehavior
     {
         $this->install()->shouldReturn(null);
     }
+
+    /**
+     * it should ask config questions
+     *
+     * @return void
+     */
+    public function it_should_ask_config_questions()
+    {
+        $this->askConfigQuestions()->shouldReturn(null);
+    }
 }
