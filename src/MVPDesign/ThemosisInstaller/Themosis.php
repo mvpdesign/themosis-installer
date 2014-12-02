@@ -3,6 +3,7 @@
 namespace MVPDesign\ThemosisInstaller;
 
 use Composer\IO\IOInterface;
+use MVPDesign\ThemosisInstaller\Config;
 use MVPDesign\ThemosisInstaller\Helper;
 
 class Themosis
