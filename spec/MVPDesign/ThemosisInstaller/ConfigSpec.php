@@ -220,6 +220,29 @@ class ConfigSpec extends ObjectBehavior
     }
 
     /**
+     * it should return a admin password
+     *
+     * @return void
+     */
+    public function it_should_return_a_admin_password()
+    {
+        $this->getAdminPassword()->shouldReturn(null);
+    }
+
+    /**
+     * it should set a admin password
+     *
+     * @return void
+     */
+    public function it_should_set_a_admin_password()
+    {
+        $adminPassword = Argument::type('string');
+
+        $this->setAdminPassword($adminPassword);
+        $this->getAdminPassword()->shouldReturn($adminPassword);
+    }
+
+    /**
      * it should return salts
      *
      * @return void
