@@ -129,20 +129,28 @@ class Themosis
 
         if ($this->io->isInteractive()) {
             // get answers to our questions
-            $dbName = $this->io->ask(
+            $dbName = $this->io->askAndValidate(
                 Helper::formatQuestion('Database name', $config->getDbName()),
+                "MVPDesign\ThemosisInstaller\Helper::validateString",
+                false,
                 $config->getDbName()
             );
-            $dbUser = $this->io->ask(
+            $dbUser = $this->io->askAndValidate(
                 Helper::formatQuestion('Database user', $config->getDbUser()),
+                "MVPDesign\ThemosisInstaller\Helper::validateString",
+                false,
                 $config->getDbUser()
             );
-            $dbPassword = $this->io->ask(
+            $dbPassword = $this->io->askAndValidate(
                 Helper::formatQuestion('Database passsword', $config->getDbPassword()),
+                "MVPDesign\ThemosisInstaller\Helper::validateString",
+                false,
                 $config->getDbPassword()
             );
-            $dbHost = $this->io->ask(
+            $dbHost = $this->io->askAndValidate(
                 Helper::formatQuestion('Database host', $config->getDbHost()),
+                "MVPDesign\ThemosisInstaller\Helper::validateString",
+                false,
                 $config->getDbHost()
             );
             $environment = $this->io->askAndValidate(
@@ -151,8 +159,10 @@ class Themosis
                 false,
                 $config->getEnvironment()
             );
-            $siteUrl = $this->io->ask(
+            $siteUrl = $this->io->askAndValidate(
                 Helper::formatQuestion('Site URL', $config->getSiteUrl()),
+                "MVPDesign\ThemosisInstaller\Helper::validateURL",
+                false,
                 $config->getSiteUrl()
             );
             $generatingWordPressSalts = $this->io->askConfirmation(
@@ -177,23 +187,31 @@ class Themosis
 
             // extra questions if installing wordpress
             if ($installingWordpress == 'y') {
-                $siteTitle = $this->io->ask(
+                $siteTitle = $this->io->askAndValidate(
                     Helper::formatQuestion('Site Title', $config->getSiteTitle()),
+                    "MVPDesign\ThemosisInstaller\Helper::validateString",
+                    false,
                     $config->getSiteTitle()
                 );
 
-                $adminUser = $this->io->ask(
+                $adminUser = $this->io->askAndValidate(
                     Helper::formatQuestion('Admin User', $config->getAdminUser()),
+                    "MVPDesign\ThemosisInstaller\Helper::validateString",
+                    false,
                     $config->getAdminUser()
                 );
 
-                $adminPassword = $this->io->ask(
+                $adminPassword = $this->io->askAndValidate(
                     Helper::formatQuestion('Admin Password', $config->getAdminPassword()),
+                    "MVPDesign\ThemosisInstaller\Helper::validateString",
+                    false,
                     $config->getAdminPassword()
                 );
 
-                $adminEmail = $this->io->ask(
+                $adminEmail = $this->io->askAndValidate(
                     Helper::formatQuestion('Admin Email', $config->getAdminEmail()),
+                    "MVPDesign\ThemosisInstaller\Helper::validateEmail",
+                    false,
                     $config->getAdminEmail()
                 );
 

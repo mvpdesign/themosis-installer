@@ -105,7 +105,7 @@ class ThemosisSpec extends ObjectBehavior
      */
     public function it_should_install()
     {
-        $this->install()->shouldReturn(null);
+        $this->shouldThrow(new \MVPDesign\ThemosisInstaller\InvalidStringLengthException("The string must have a length greater than 0."))->duringInstall();
     }
 
     /**
