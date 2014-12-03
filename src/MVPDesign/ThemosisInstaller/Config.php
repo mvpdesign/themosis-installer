@@ -50,7 +50,7 @@ class Config
      *
      * @var string
      */
-    private $environment = 'production';
+    private $environment = 'local';
 
     /**
      * site url
@@ -71,7 +71,7 @@ class Config
      *
      * @var string
      */
-    private $isSitePublic = true;
+    private $isSitePublic = false;
 
     /**
      * site description
