@@ -330,9 +330,6 @@ class Themosis
             // install the wordpress database
             $this->installWordpress();
 
-            // customize wordpress options
-            $this->customizeWordPressOptions();
-
             // activate the wordpress theme
             $this->activateWordPressTheme();
 
@@ -347,6 +344,9 @@ class Themosis
 
             // update the sample page
             $this->updateSamplePage();
+
+            // customize wordpress options
+            $this->customizeWordPressOptions();
         }
 
         $io->write('Themosis installation complete.');
@@ -474,6 +474,8 @@ class Themosis
         // add the options to update
         $options['blogdescription'] = $config->getSiteDescription();
         $options['blog_public']     = $config->isSitePublic() ? 1 : 0;
+        $options['show_on_front']   = 'page';
+        $options['page_on_front']   = 2;
 
         foreach ($options as $option => $value) {
             $process = new Process($command . ' ' . $option . ' ' . $value);
