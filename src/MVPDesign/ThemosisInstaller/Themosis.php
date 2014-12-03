@@ -175,40 +175,47 @@ class Themosis
                 false,
                 $config->getDbName()
             );
+
             $dbUser = $io->askAndValidate(
                 Helper::formatQuestion('Database user', $config->getDbUser()),
                 "MVPDesign\ThemosisInstaller\Helper::validateString",
                 false,
                 $config->getDbUser()
             );
+
             $dbPassword = $io->askAndValidate(
                 Helper::formatQuestion('Database passsword', $config->getDbPassword()),
                 "MVPDesign\ThemosisInstaller\Helper::validateString",
                 false,
                 $config->getDbPassword()
             );
+
             $dbHost = $io->askAndValidate(
                 Helper::formatQuestion('Database host', $config->getDbHost()),
                 "MVPDesign\ThemosisInstaller\Helper::validateString",
                 false,
                 $config->getDbHost()
             );
+
             $environment = $io->askAndValidate(
                 Helper::formatQuestion('Environment', $config->getEnvironment()),
                 "MVPDesign\ThemosisInstaller\Config::validateEnvironment",
                 false,
                 $config->getEnvironment()
             );
+
             $siteUrl = $io->askAndValidate(
                 Helper::formatQuestion('Site URL', $config->getSiteUrl()),
                 "MVPDesign\ThemosisInstaller\Helper::validateURL",
                 false,
                 $config->getSiteUrl()
             );
+
             $generatingWordPressSalts = $io->askConfirmation(
                 Helper::formatQuestion('Generate WordPress Salts', $this->isGeneratingWordPressSalts() ? 'y' : 'n'),
                 $this->isGeneratingWordPressSalts()
             );
+
             $installingWordpress = $io->askConfirmation(
                 Helper::formatQuestion('Install WordPress', $this->isInstallingWordPress() ? 'y' : 'n'),
                 $this->isInstallingWordPress()
