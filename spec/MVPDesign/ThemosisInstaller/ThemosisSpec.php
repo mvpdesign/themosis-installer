@@ -83,6 +83,16 @@ class ThemosisSpec extends ObjectBehavior
     }
 
     /**
+     * it should return the storage path
+     *
+     * @return void
+     */
+    public function it_should_return_the_storage_path()
+    {
+        $this->getStoragePath()->shouldReturn('app/storage');
+    }
+
+    /**
      * it should return is generating wordpress salts
      *
      * @return void

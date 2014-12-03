@@ -33,6 +33,13 @@ class Themosis
     private $theme = 'themosis';
 
     /**
+     * storage path
+     *
+     * @var string
+     */
+    private $storagePath = 'app/storage';
+
+    /**
      * generating wordpress salts
      *
      * @var bool
@@ -96,6 +103,16 @@ class Themosis
     public function getTheme()
     {
         return $this->theme;
+    }
+
+    /**
+     * get the storage path
+     *
+     * @return string
+     */
+    public function getStoragePath()
+    {
+        return $this->storagePath;
     }
 
     /**
@@ -270,6 +287,9 @@ class Themosis
 
             // activate the wordpress theme
             $this->activateWordPressTheme();
+
+            // make the themosis storage directory writable
+            $this->makeThemosisThemeStorageDirectoryWritable();
         }
 
         $io->write('Themosis installation complete.');
@@ -373,6 +393,43 @@ class Themosis
         }
 
         echo $process->getOutput();
+    }
+
+    /**
+     * change themosis theme storage directory permissions
+     *
+     * @return void
+     */
+    private function makeThemosisThemeStorageDirectoryWritable()
+    {
+        $io = $this->getIO();
+
+        // retrieve the theme path
+        $themePathCommand  = $this->getBinDirectory() . 'wp theme path ' . $this->getTheme();
+        $themePathCommand .= ' --dir';
+
+        $themePathProcess = new Process($themePathCommand);
+        $themePathProcess->run();
+
+        if (! $themePathProcess->isSuccessful()) {
+            throw new \RuntimeException($themePathProcess->getErrorOutput());
+        }
+
+        // generate the theme storage path
+        $storagePath    = $themePathProcess->getOutput() . '/' . $this->getStoragePath();
+        $storagePath    = str_replace(array("\n", "\r"), '', $storagePath);
+
+        // make the storage directory writable
+        $storageWritableCommand = 'chmod -R 777 ' . $storagePath;
+
+        $storageWritableProcess = new Process($storageWritableCommand);
+        $storageWritableProcess->run();
+
+        if (! $storageWritableProcess->isSuccessful()) {
+            throw new \RuntimeException($storageWritableProcess->getErrorOutput());
+        }
+
+        $io->write('Themosis storage directory is now writable.');
     }
 
     /**
