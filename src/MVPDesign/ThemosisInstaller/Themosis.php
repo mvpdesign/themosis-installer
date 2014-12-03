@@ -338,6 +338,12 @@ class Themosis
 
             // make the themosis storage directory writable
             $this->makeThemosisThemeStorageDirectoryWritable();
+
+            // remove the hello world comment
+            $this->removeHelloWorldComment();
+
+            // remove the hello world post
+            $this->removeHelloWorldPost();
         }
 
         $io->write('Themosis installation complete.');
@@ -532,6 +538,46 @@ class Themosis
         }
 
         $io->write('Themosis storage directory is now writable.');
+    }
+
+    /**
+     * remove hello world comment
+     *
+     * @return void
+     */
+    private function removeHelloWorldComment()
+    {
+        $command  = $this->getBinDirectory() . 'wp comment delete 1';
+        $command .= ' --force';
+
+        $process = new Process($command);
+        $process->run();
+
+        if (! $process->isSuccessful()) {
+            throw new \RuntimeException($process->getErrorOutput());
+        }
+
+        echo $process->getOutput();
+    }
+
+    /**
+     * remove hello world post
+     *
+     * @return void
+     */
+    private function removeHelloWorldPost()
+    {
+        $command  = $this->getBinDirectory() . 'wp post delete 1';
+        $command .= ' --force';
+
+        $process = new Process($command);
+        $process->run();
+
+        if (! $process->isSuccessful()) {
+            throw new \RuntimeException($process->getErrorOutput());
+        }
+
+        echo $process->getOutput();
     }
 
     /**
