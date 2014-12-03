@@ -547,7 +547,9 @@ class Themosis
      */
     private function removeHelloWorldComment()
     {
-        $command  = $this->getBinDirectory() . 'wp comment delete 1';
+        $commentID = 1;
+
+        $command  = $this->getBinDirectory() . 'wp comment delete ' . $commentID;
         $command .= ' --force';
 
         $process = new Process($command);
@@ -567,7 +569,9 @@ class Themosis
      */
     private function removeHelloWorldPost()
     {
-        $command  = $this->getBinDirectory() . 'wp post delete 1';
+        $postID = 1;
+
+        $command  = $this->getBinDirectory() . 'wp post delete ' . $postID;
         $command .= ' --force';
 
         $process = new Process($command);
