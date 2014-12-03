@@ -439,6 +439,7 @@ class Themosis
     private function installWordPress()
     {
         $config = $this->getConfig();
+        $io     = $this->getIO();
 
         $siteUrl       = Helper::validateURL($config->getSiteUrl());
         $siteTitle     = Helper::validateString($config->getSiteTitle());
@@ -460,7 +461,7 @@ class Themosis
             throw new \RuntimeException($process->getErrorOutput());
         }
 
-        echo $process->getOutput();
+        $io->write('WordPress installed successfully.');
     }
 
     /**
@@ -471,6 +472,7 @@ class Themosis
     private function customizeWordPressOptions()
     {
         $config  = $this->getConfig();
+        $io      = $this->getIO();
         $options = array();
         $command = $this->getBinDirectory() . 'wp option update';
 
@@ -488,7 +490,7 @@ class Themosis
                 throw new \RuntimeException($process->getErrorOutput());
             }
 
-            echo $process->getOutput();
+            $io->write("Updated WordPress option '" . $option . "' to '" . $value . "'.");
         }
     }
 
@@ -499,6 +501,7 @@ class Themosis
      */
     private function activateWordPressTheme()
     {
+        $io      = $this->getIO();
         $command = $this->getBinDirectory() . 'wp theme activate ' . $this->getTheme();
 
         $process = new Process($command);
@@ -508,7 +511,7 @@ class Themosis
             throw new \RuntimeException($process->getErrorOutput());
         }
 
-        echo $process->getOutput();
+        $io->write("Activated the '" . ucfirst($this->getTheme()) . "' WordPress theme.");
     }
 
     /**
@@ -555,6 +558,7 @@ class Themosis
      */
     private function removeHelloWorldComment()
     {
+        $io        = $this->getIO();
         $commentID = 1;
 
         $command  = $this->getBinDirectory() . 'wp comment delete ' . $commentID;
@@ -567,7 +571,7 @@ class Themosis
             throw new \RuntimeException($process->getErrorOutput());
         }
 
-        echo $process->getOutput();
+        $io->write('Removed hello world WordPress comment.');
     }
 
     /**
@@ -577,6 +581,7 @@ class Themosis
      */
     private function removeHelloWorldPost()
     {
+        $io     = $this->getIO();
         $postID = 1;
 
         $command  = $this->getBinDirectory() . 'wp post delete ' . $postID;
@@ -589,7 +594,7 @@ class Themosis
             throw new \RuntimeException($process->getErrorOutput());
         }
 
-        echo $process->getOutput();
+        $io->write('Removed hello world WordPress post.');
     }
 
     /**
@@ -599,6 +604,7 @@ class Themosis
      */
     private function updateSamplePage()
     {
+        $io          = $this->getIO();
         $postID      = 2;
         $postTitle   = 'Home';
         $postContent = '\\';
@@ -615,7 +621,7 @@ class Themosis
             throw new \RuntimeException($process->getErrorOutput());
         }
 
-        echo $process->getOutput();
+        $io->write('Refactored the sample WordPress page.');
     }
 
     /**
@@ -625,6 +631,7 @@ class Themosis
      */
     private function updateRewriteRules()
     {
+        $io           = $this->getIO();
         $structure    = "/%category%/%postname%/";
         $categoryBase = "/category/";
         $tagBase      = "/tag/";
@@ -640,7 +647,7 @@ class Themosis
             throw new \RuntimeException($process->getErrorOutput());
         }
 
-        echo $process->getOutput();
+        $io->write('Updated the WordPress rewrite structure.');
     }
 
     /**
