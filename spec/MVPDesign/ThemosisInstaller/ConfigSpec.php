@@ -197,6 +197,29 @@ class ConfigSpec extends ObjectBehavior
     }
 
     /**
+     * it should return a site description
+     *
+     * @return void
+     */
+    public function it_should_return_a_site_description()
+    {
+        $this->getSiteDescription()->shouldReturn(null);
+    }
+
+    /**
+     * it should set a site description
+     *
+     * @return void
+     */
+    public function it_should_set_a_site_description()
+    {
+        $siteDescription = Argument::type('string');
+
+        $this->setSiteDescription($siteDescription);
+        $this->getSiteDescription()->shouldReturn($siteDescription);
+    }
+
+    /**
      * it should return an admin user
      *
      * @return void

@@ -67,6 +67,13 @@ class Config
     private $siteTitle;
 
     /**
+     * site description
+     *
+     * @var string
+     */
+    private $siteDescription;
+
+    /**
      * admin user
      *
      * @var string
@@ -265,6 +272,27 @@ class Config
     public function setSiteTitle($siteTitle)
     {
         $this->siteTitle = $siteTitle;
+    }
+
+    /**
+     * get the site description
+     *
+     * @return string
+     */
+    public function getSiteDescription()
+    {
+        return $this->siteDescription;
+    }
+
+    /**
+     * set the site description
+     *
+     * @param  string $siteDescription
+     * @return void
+     */
+    public function setSiteDescription($siteDescription)
+    {
+        $this->siteDescription = $siteDescription;
     }
 
     /**
