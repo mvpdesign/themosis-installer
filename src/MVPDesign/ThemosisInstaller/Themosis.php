@@ -344,6 +344,9 @@ class Themosis
 
             // remove the hello world post
             $this->removeHelloWorldPost();
+
+            // update the sample page
+            $this->updateSamplePage();
         }
 
         $io->write('Themosis installation complete.');
@@ -573,6 +576,32 @@ class Themosis
 
         $command  = $this->getBinDirectory() . 'wp post delete ' . $postID;
         $command .= ' --force';
+
+        $process = new Process($command);
+        $process->run();
+
+        if (! $process->isSuccessful()) {
+            throw new \RuntimeException($process->getErrorOutput());
+        }
+
+        echo $process->getOutput();
+    }
+
+    /**
+     * update sample page
+     *
+     * @return void
+     */
+    private function updateSamplePage()
+    {
+        $postID      = 2;
+        $postTitle   = 'Home';
+        $postContent = '';
+
+        $command  = $this->getBinDirectory() . 'wp post update ' . $postID;
+        $command .= ' --post_title=' . $postTitle;
+        $command .= ' --post_name=' . str_replace(' ', '-', strtolower($postTitle));
+        $command .= ' --post_content=' . $postContent;
 
         $process = new Process($command);
         $process->run();
