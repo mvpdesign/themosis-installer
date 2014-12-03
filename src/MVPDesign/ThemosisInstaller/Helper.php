@@ -51,7 +51,7 @@ class Helper
     /**
      * validate string
      *
-     * @return void
+     * @return string
      */
     public static function validateString($string)
     {
@@ -65,7 +65,7 @@ class Helper
     /**
      * validate email
      *
-     * @return void
+     * @return string
      */
     public static function validateEmail($email)
     {
@@ -79,7 +79,7 @@ class Helper
     /**
      * validate url
      *
-     * @return void
+     * @return string
      */
     public static function validateURL($url)
     {
