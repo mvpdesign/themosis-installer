@@ -383,7 +383,7 @@ class Themosis
      */
     private function activateWordPressTheme()
     {
-        $command  = $this->getBinDirectory() . 'wp theme activate ' . $this->getTheme();
+        $command = $this->getBinDirectory() . 'wp theme activate ' . $this->getTheme();
 
         $process = new Process($command);
         $process->run();
