@@ -601,12 +601,12 @@ class Themosis
     {
         $postID      = 2;
         $postTitle   = 'Home';
-        $postContent = '';
+        $postContent = '\\';
 
-        $command  = $this->getBinDirectory() . 'wp post update ' . $postID;
-        $command .= ' --post_title=' . $postTitle;
-        $command .= ' --post_name=' . str_replace(' ', '-', strtolower($postTitle));
-        $command .= ' --post_content=' . $postContent;
+        $command  = $this->getBinDirectory() . "wp post update " . $postID;
+        $command .= " --post_title='" . $postTitle . "'";
+        $command .= " --post_name='" . str_replace(' ', '-', strtolower($postTitle)) . "'";
+        $command .= " --post_content='" . $postContent . "'";
 
         $process = new Process($command);
         $process->run();
