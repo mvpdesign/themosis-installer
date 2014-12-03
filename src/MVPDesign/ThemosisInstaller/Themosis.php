@@ -632,7 +632,6 @@ class Themosis
         $command  = $this->getBinDirectory() . "wp rewrite structure '" . $structure . "'";
         $command .= ' --category-base=' . $categoryBase;
         $command .= ' --tag-base=' . $tagBase;
-        $command .= ' --hard';
 
         $process = new Process($command);
         $process->run();
