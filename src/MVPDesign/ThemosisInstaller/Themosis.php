@@ -246,6 +246,11 @@ class Themosis
                     $config->getSiteDescription()
                 );
 
+                $isSitePublic = $io->askConfirmation(
+                    Helper::formatQuestion('Site visible to search engines', $this->isSitePublic() ? 'y' : 'n'),
+                    $this->isSitePublic()
+                );
+
                 $adminUser = $io->askAndValidate(
                     Helper::formatQuestion('Admin User', $config->getAdminUser()),
                     "MVPDesign\ThemosisInstaller\Helper::validateString",
@@ -270,6 +275,7 @@ class Themosis
                 // save the answers
                 $config->setSiteTitle($siteTitle);
                 $config->setSiteDescription($siteDescription);
+                $config->setIsSitePublic($isSitePublic == 'y' ? true : false);
                 $config->setAdminUser($adminUser);
                 $config->setAdminPassword($adminPassword);
                 $config->setAdminEmail($adminEmail);
@@ -405,6 +411,7 @@ class Themosis
 
         // add the options to update
         $options['blogdescription'] = $config->getSiteDescription();
+        $options['blog_public']     = $config->isSitePublic() ? 1 : 0;
 
         foreach ($options as $option => $value) {
             $process = new Process($command . ' ' . $option . ' ' . $value);
