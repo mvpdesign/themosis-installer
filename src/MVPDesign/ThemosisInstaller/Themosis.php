@@ -439,7 +439,6 @@ class Themosis
     private function installWordPress()
     {
         $config = $this->getConfig();
-        $io     = $this->getIO();
 
         $siteUrl       = Helper::validateURL($config->getSiteUrl());
         $siteTitle     = Helper::validateString($config->getSiteTitle());
@@ -454,14 +453,7 @@ class Themosis
         $command .= ' --admin_password=' . $adminPassword;
         $command .= ' --admin_email=' . $adminEmail;
 
-        $process = new Process($command);
-        $process->run();
-
-        if (! $process->isSuccessful()) {
-            throw new \RuntimeException($process->getErrorOutput());
-        }
-
-        $io->write('WordPress installed successfully.');
+        $this->runProcess($command, 'WordPress installed successfully.');
     }
 
     /**
@@ -472,7 +464,6 @@ class Themosis
     private function customizeWordPressOptions()
     {
         $config  = $this->getConfig();
-        $io      = $this->getIO();
         $options = array();
         $command = $this->getBinDirectory() . 'wp option update';
 
@@ -483,14 +474,7 @@ class Themosis
         $options['page_on_front']   = 2;
 
         foreach ($options as $option => $value) {
-            $process = new Process($command . ' ' . $option . ' ' . $value);
-            $process->run();
-
-            if (! $process->isSuccessful()) {
-                throw new \RuntimeException($process->getErrorOutput());
-            }
-
-            $io->write("Updated WordPress option '" . $option . "' to '" . $value . "'.");
+            $this->runProcess($command . ' ' . $option . ' ' . $value, "Updated WordPress option '" . $option . "' to '" . $value . "'.");
         }
     }
 
@@ -501,17 +485,9 @@ class Themosis
      */
     private function activateWordPressTheme()
     {
-        $io      = $this->getIO();
         $command = $this->getBinDirectory() . 'wp theme activate ' . $this->getTheme();
 
-        $process = new Process($command);
-        $process->run();
-
-        if (! $process->isSuccessful()) {
-            throw new \RuntimeException($process->getErrorOutput());
-        }
-
-        $io->write("Activated the '" . ucfirst($this->getTheme()) . "' WordPress theme.");
+        $this->runProcess($command, "Activated the '" . ucfirst($this->getTheme()) . "' WordPress theme.");
     }
 
     /**
@@ -521,34 +497,20 @@ class Themosis
      */
     private function makeThemosisThemeStorageDirectoryWritable()
     {
-        $io = $this->getIO();
-
         // retrieve the theme path
         $themePathCommand  = $this->getBinDirectory() . 'wp theme path ' . $this->getTheme();
         $themePathCommand .= ' --dir';
 
-        $themePathProcess = new Process($themePathCommand);
-        $themePathProcess->run();
-
-        if (! $themePathProcess->isSuccessful()) {
-            throw new \RuntimeException($themePathProcess->getErrorOutput());
-        }
+        $themePath = $this->runProcess($themePathCommand, '', true);
 
         // generate the theme storage path
-        $storagePath    = $themePathProcess->getOutput() . '/' . $this->getStoragePath();
+        $storagePath    = $themePath . '/' . $this->getStoragePath();
         $storagePath    = str_replace(array("\n", "\r"), '', $storagePath);
 
         // make the storage directory writable
         $storageWritableCommand = 'chmod -R 777 ' . $storagePath;
 
-        $storageWritableProcess = new Process($storageWritableCommand);
-        $storageWritableProcess->run();
-
-        if (! $storageWritableProcess->isSuccessful()) {
-            throw new \RuntimeException($storageWritableProcess->getErrorOutput());
-        }
-
-        $io->write('Themosis storage directory is now writable.');
+        $this->runProcess($storageWritableCommand, 'Themosis storage directory is now writable.');
     }
 
     /**
@@ -558,20 +520,12 @@ class Themosis
      */
     private function removeHelloWorldComment()
     {
-        $io        = $this->getIO();
         $commentID = 1;
 
         $command  = $this->getBinDirectory() . 'wp comment delete ' . $commentID;
         $command .= ' --force';
 
-        $process = new Process($command);
-        $process->run();
-
-        if (! $process->isSuccessful()) {
-            throw new \RuntimeException($process->getErrorOutput());
-        }
-
-        $io->write('Removed hello world WordPress comment.');
+        $this->runProcess($command, 'Removed hello world WordPress comment.');
     }
 
     /**
@@ -581,20 +535,12 @@ class Themosis
      */
     private function removeHelloWorldPost()
     {
-        $io     = $this->getIO();
         $postID = 1;
 
         $command  = $this->getBinDirectory() . 'wp post delete ' . $postID;
         $command .= ' --force';
 
-        $process = new Process($command);
-        $process->run();
-
-        if (! $process->isSuccessful()) {
-            throw new \RuntimeException($process->getErrorOutput());
-        }
-
-        $io->write('Removed hello world WordPress post.');
+        $this->runProcess($command, 'Removed hello world WordPress post.');
     }
 
     /**
@@ -604,7 +550,6 @@ class Themosis
      */
     private function updateSamplePage()
     {
-        $io          = $this->getIO();
         $postID      = 2;
         $postTitle   = 'Home';
         $postContent = '\\';
@@ -614,14 +559,7 @@ class Themosis
         $command .= " --post_name='" . str_replace(' ', '-', strtolower($postTitle)) . "'";
         $command .= " --post_content='" . $postContent . "'";
 
-        $process = new Process($command);
-        $process->run();
-
-        if (! $process->isSuccessful()) {
-            throw new \RuntimeException($process->getErrorOutput());
-        }
-
-        $io->write('Refactored the sample WordPress page.');
+        $this->runProcess($command, 'Refactored the sample WordPress page.');
     }
 
     /**
@@ -631,7 +569,6 @@ class Themosis
      */
     private function updateRewriteRules()
     {
-        $io           = $this->getIO();
         $structure    = "/%category%/%postname%/";
         $categoryBase = "/category/";
         $tagBase      = "/tag/";
@@ -640,14 +577,7 @@ class Themosis
         $command .= ' --category-base=' . $categoryBase;
         $command .= ' --tag-base=' . $tagBase;
 
-        $process = new Process($command);
-        $process->run();
-
-        if (! $process->isSuccessful()) {
-            throw new \RuntimeException($process->getErrorOutput());
-        }
-
-        $io->write('Updated the WordPress rewrite structure.');
+        $this->runProcess($command, 'Updated the WordPress rewrite structure.');
     }
 
     /**
@@ -671,5 +601,33 @@ class Themosis
     private function getCWD()
     {
         return dirname(__FILE__) . "/../../../";
+    }
+
+    /**
+     * run a process
+     *
+     * @param  string $command
+     * @param  string $successMessage
+     * @param  bool $returnOutput
+     * @return void
+     */
+    private function runProcess($command, $successMessage = '', $returnOutput = false)
+    {
+        $io = $this->getIO();
+
+        $process = new Process($command);
+        $process->run();
+
+        if (! $process->isSuccessful()) {
+            throw new \RuntimeException($process->getErrorOutput());
+        }
+
+        $message = $successMessage != '' ? $successMessage : $process->getOutput();
+
+        if ($returnOutput) {
+            return $message;
+        }
+
+        $io->write($message);
     }
 }
