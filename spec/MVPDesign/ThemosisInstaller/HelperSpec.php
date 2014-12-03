@@ -95,4 +95,19 @@ class HelperSpec extends ObjectBehavior
         $this->shouldThrow(new \MVPDesign\ThemosisInstaller\InvalidURLException('The url is not valid.'))->duringValidateURL("");
         $this->validateURL($url)->shouldReturn($url);
     }
+
+    /**
+     * it should validate confirmations
+     *
+     * @return void
+     */
+    public function it_should_validate_confirmations()
+    {
+        $confirmationY = 'y';
+        $confirmationN = 'n';
+
+        $this->shouldThrow(new \MVPDesign\ThemosisInstaller\InvalidConfirmationException('Valid responses are: y, n.'))->duringValidateConfirmation("");
+        $this->validateConfirmation($confirmationY)->shouldReturn($confirmationY);
+        $this->validateConfirmation($confirmationN)->shouldReturn($confirmationN);
+    }
 }

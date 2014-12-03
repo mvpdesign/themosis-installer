@@ -5,6 +5,7 @@ namespace MVPDesign\ThemosisInstaller;
 use MVPDesign\ThemosisInstaller\InvalidStringLengthException;
 use MVPDesign\ThemosisInstaller\InvalidEmailException;
 use MVPDesign\ThemosisInstaller\InvalidURLException;
+use MVPDesign\ThemosisInstaller\InvalidConfirmationException;
 
 class Helper
 {
@@ -88,5 +89,21 @@ class Helper
         }
 
         return $url;
+    }
+
+    /**
+     * validate confirmation
+     *
+     * @return string
+     */
+    public static function validateConfirmation($response)
+    {
+        $validResponses = array('y', 'n');
+
+        if (! in_array($response, $validResponses)) {
+            throw new InvalidConfirmationException('Valid responses are: ' . implode(', ', $validResponses) . '.');
+        }
+
+        return $response;
     }
 }

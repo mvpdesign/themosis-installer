@@ -211,13 +211,17 @@ class Themosis
                 $config->getSiteUrl()
             );
 
-            $generatingWordPressSalts = $io->askConfirmation(
+            $generatingWordPressSalts = $io->askAndValidate(
                 Helper::formatQuestion('Generate WordPress Salts', $this->isGeneratingWordPressSalts() ? 'y' : 'n'),
+                "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
+                false,
                 $this->isGeneratingWordPressSalts()
             );
 
-            $installingWordpress = $io->askConfirmation(
+            $installingWordpress = $io->askAndValidate(
                 Helper::formatQuestion('Install WordPress', $this->isInstallingWordPress() ? 'y' : 'n'),
+                "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
+                false,
                 $this->isInstallingWordPress()
             );
 
@@ -246,9 +250,11 @@ class Themosis
                     $config->getSiteDescription()
                 );
 
-                $isSitePublic = $io->askConfirmation(
-                    Helper::formatQuestion('Site visible to search engines', $this->isSitePublic() ? 'y' : 'n'),
-                    $this->isSitePublic()
+                $isSitePublic = $io->askAndValidate(
+                    Helper::formatQuestion('Site visible to search engines', $config->isSitePublic() ? 'y' : 'n'),
+                    "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
+                    false,
+                    $config->isSitePublic()
                 );
 
                 $adminUser = $io->askAndValidate(
