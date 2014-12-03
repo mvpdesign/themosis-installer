@@ -347,6 +347,9 @@ class Themosis
 
             // customize wordpress options
             $this->customizeWordPressOptions();
+
+            // update the rewrite rules
+            $this->updateRewriteRules();
         }
 
         $io->write('Themosis installation complete.');
@@ -604,6 +607,32 @@ class Themosis
         $command .= ' --post_title=' . $postTitle;
         $command .= ' --post_name=' . str_replace(' ', '-', strtolower($postTitle));
         $command .= ' --post_content=' . $postContent;
+
+        $process = new Process($command);
+        $process->run();
+
+        if (! $process->isSuccessful()) {
+            throw new \RuntimeException($process->getErrorOutput());
+        }
+
+        echo $process->getOutput();
+    }
+
+    /**
+     * update rewrite rules
+     *
+     * @return void
+     */
+    private function updateRewriteRules()
+    {
+        $structure    = "/%category%/%postname%/";
+        $categoryBase = "/category/";
+        $tagBase      = "/tag/";
+
+        $command  = $this->getBinDirectory() . "wp rewrite structure '" . $structure . "'";
+        $command .= ' --category-base=' . $categoryBase;
+        $command .= ' --tag-base=' . $tagBase;
+        $command .= ' --hard';
 
         $process = new Process($command);
         $process->run();
