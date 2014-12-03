@@ -40,6 +40,13 @@ class Themosis
     private $storagePath = 'app/storage';
 
     /**
+     * config path
+     *
+     * @var string
+     */
+    private $configPath = 'config';
+
+    /**
      * generating wordpress salts
      *
      * @var bool
@@ -113,6 +120,16 @@ class Themosis
     public function getStoragePath()
     {
         return $this->storagePath;
+    }
+
+    /**
+     * get the config path
+     *
+     * @return string
+     */
+    public function getConfigPath()
+    {
+        return $this->configPath;
     }
 
     /**
@@ -306,6 +323,9 @@ class Themosis
         // create the env.environment.php file
         $this->createEnvironmentFile();
 
+        // update the environment hostnames
+        $this->updateEnvironmentHostname();
+
         if ($this->isInstallingWordpress()) {
             // install the wordpress database
             $this->installWordpress();
@@ -370,6 +390,33 @@ class Themosis
         file_put_contents($envFileName, $envTemplate, LOCK_EX);
 
         $io->write('Created the environment file.');
+    }
+
+    /**
+     * update the environment hostnames
+     *
+     * @return void
+     */
+    private function updateEnvironmentHostname()
+    {
+        $config   = $this->getConfig();
+        $io       = $this->getIO();
+        $hostname = gethostname();
+
+        // load the environment hostnames file
+        $envHostnamesFilePath = $this->getConfigPath() . "/environment.php";
+
+        if (file_exists($envHostnamesFilePath)) {
+            $envHostnames         = file_get_contents($envHostnamesFilePath);
+
+            // inject the hostname variables
+            $envHostnames = str_replace("'" . strtolower($config->getEnvironment()) . "' => 'machine hostname'", "'" . strtolower($config->getEnvironment()) . "' => '" . $hostname . "'", $envHostnames);
+
+            // update the environment hostnames file
+            file_put_contents($envHostnamesFilePath, $envHostnames, LOCK_EX);
+
+            $io->write('Updated the environment hostname.');
+        }
     }
 
     /**

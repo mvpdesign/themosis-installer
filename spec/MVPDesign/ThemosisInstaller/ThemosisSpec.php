@@ -93,6 +93,16 @@ class ThemosisSpec extends ObjectBehavior
     }
 
     /**
+     * it should return the config path
+     *
+     * @return void
+     */
+    public function it_should_return_the_config_path()
+    {
+        $this->getConfigPath()->shouldReturn('config');
+    }
+
+    /**
      * it should return is generating wordpress salts
      *
      * @return void
