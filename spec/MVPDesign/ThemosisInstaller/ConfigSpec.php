@@ -116,7 +116,7 @@ class ConfigSpec extends ObjectBehavior
      */
     public function it_should_return_a_environment()
     {
-        $this->getEnvironment()->shouldReturn('production');
+        $this->getEnvironment()->shouldReturn('local');
     }
 
     /**
@@ -226,7 +226,7 @@ class ConfigSpec extends ObjectBehavior
      */
     public function it_should_return_is_site_public()
     {
-        $this->isSitePublic()->shouldReturn(true);
+        $this->isSitePublic()->shouldReturn(false);
     }
 
     /**
@@ -236,7 +236,7 @@ class ConfigSpec extends ObjectBehavior
      */
     public function it_should_set_is_site_public()
     {
-        $isSitePublic = false;
+        $isSitePublic = true;
 
         $this->setIsSitePublic($isSitePublic);
         $this->isSitePublic()->shouldReturn($isSitePublic);
