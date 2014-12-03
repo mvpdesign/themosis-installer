@@ -18,7 +18,7 @@ class Helper
     {
         $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         $chars .= '!@#$%^&*()';
-        $chars .= '-_ []{}<>~`+=,.;:/?|';
+        $chars .= '-_[]{}<>~`+=,.;:/?|';
 
         $string = '';
 
