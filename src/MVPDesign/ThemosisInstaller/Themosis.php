@@ -330,14 +330,26 @@ class Themosis
             // install the wordpress database
             $this->installWordpress();
 
-            // customize wordpress options
-            $this->customizeWordPressOptions();
-
             // activate the wordpress theme
             $this->activateWordPressTheme();
 
             // make the themosis storage directory writable
             $this->makeThemosisThemeStorageDirectoryWritable();
+
+            // remove the hello world comment
+            $this->removeHelloWorldComment();
+
+            // remove the hello world post
+            $this->removeHelloWorldPost();
+
+            // update the sample page
+            $this->updateSamplePage();
+
+            // customize wordpress options
+            $this->customizeWordPressOptions();
+
+            // update the rewrite rules
+            $this->updateRewriteRules();
         }
 
         $io->write('Themosis installation complete.');
@@ -465,6 +477,8 @@ class Themosis
         // add the options to update
         $options['blogdescription'] = $config->getSiteDescription();
         $options['blog_public']     = $config->isSitePublic() ? 1 : 0;
+        $options['show_on_front']   = 'page';
+        $options['page_on_front']   = 2;
 
         foreach ($options as $option => $value) {
             $process = new Process($command . ' ' . $option . ' ' . $value);
@@ -532,6 +546,102 @@ class Themosis
         }
 
         $io->write('Themosis storage directory is now writable.');
+    }
+
+    /**
+     * remove hello world comment
+     *
+     * @return void
+     */
+    private function removeHelloWorldComment()
+    {
+        $commentID = 1;
+
+        $command  = $this->getBinDirectory() . 'wp comment delete ' . $commentID;
+        $command .= ' --force';
+
+        $process = new Process($command);
+        $process->run();
+
+        if (! $process->isSuccessful()) {
+            throw new \RuntimeException($process->getErrorOutput());
+        }
+
+        echo $process->getOutput();
+    }
+
+    /**
+     * remove hello world post
+     *
+     * @return void
+     */
+    private function removeHelloWorldPost()
+    {
+        $postID = 1;
+
+        $command  = $this->getBinDirectory() . 'wp post delete ' . $postID;
+        $command .= ' --force';
+
+        $process = new Process($command);
+        $process->run();
+
+        if (! $process->isSuccessful()) {
+            throw new \RuntimeException($process->getErrorOutput());
+        }
+
+        echo $process->getOutput();
+    }
+
+    /**
+     * update sample page
+     *
+     * @return void
+     */
+    private function updateSamplePage()
+    {
+        $postID      = 2;
+        $postTitle   = 'Home';
+        $postContent = '';
+
+        $command  = $this->getBinDirectory() . 'wp post update ' . $postID;
+        $command .= ' --post_title=' . $postTitle;
+        $command .= ' --post_name=' . str_replace(' ', '-', strtolower($postTitle));
+        $command .= ' --post_content=' . $postContent;
+
+        $process = new Process($command);
+        $process->run();
+
+        if (! $process->isSuccessful()) {
+            throw new \RuntimeException($process->getErrorOutput());
+        }
+
+        echo $process->getOutput();
+    }
+
+    /**
+     * update rewrite rules
+     *
+     * @return void
+     */
+    private function updateRewriteRules()
+    {
+        $structure    = "/%category%/%postname%/";
+        $categoryBase = "/category/";
+        $tagBase      = "/tag/";
+
+        $command  = $this->getBinDirectory() . "wp rewrite structure '" . $structure . "'";
+        $command .= ' --category-base=' . $categoryBase;
+        $command .= ' --tag-base=' . $tagBase;
+        $command .= ' --hard';
+
+        $process = new Process($command);
+        $process->run();
+
+        if (! $process->isSuccessful()) {
+            throw new \RuntimeException($process->getErrorOutput());
+        }
+
+        echo $process->getOutput();
     }
 
     /**
