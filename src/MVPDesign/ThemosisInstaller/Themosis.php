@@ -234,6 +234,11 @@ class Themosis
                     $config->getSiteTitle()
                 );
 
+                $siteDescription = $io->ask(
+                    Helper::formatQuestion('Site Description', $config->getSiteDescription()),
+                    $config->getSiteDescription()
+                );
+
                 $adminUser = $io->askAndValidate(
                     Helper::formatQuestion('Admin User', $config->getAdminUser()),
                     "MVPDesign\ThemosisInstaller\Helper::validateString",
@@ -257,6 +262,7 @@ class Themosis
 
                 // save the answers
                 $config->setSiteTitle($siteTitle);
+                $config->setSiteDescription($siteDescription);
                 $config->setAdminUser($adminUser);
                 $config->setAdminPassword($adminPassword);
                 $config->setAdminEmail($adminEmail);
@@ -284,6 +290,9 @@ class Themosis
         if ($this->isInstallingWordpress()) {
             // install the wordpress database
             $this->installWordpress();
+
+            // customize wordpress options
+            $this->customizeWordPressOptions();
 
             // activate the wordpress theme
             $this->activateWordPressTheme();
@@ -374,6 +383,32 @@ class Themosis
         }
 
         echo $process->getOutput();
+    }
+
+    /**
+     * customize wordpress options
+     *
+     * @return void
+     */
+    private function customizeWordPressOptions()
+    {
+        $config  = $this->getConfig();
+        $options = array();
+        $command = $this->getBinDirectory() . 'wp option update';
+
+        // add the options to update
+        $options['blogdescription'] = $config->getSiteDescription();
+
+        foreach ($options as $option => $value) {
+            $process = new Process($command . ' ' . $option . ' ' . $value);
+            $process->run();
+
+            if (! $process->isSuccessful()) {
+                throw new \RuntimeException($process->getErrorOutput());
+            }
+
+            echo $process->getOutput();
+        }
     }
 
     /**
