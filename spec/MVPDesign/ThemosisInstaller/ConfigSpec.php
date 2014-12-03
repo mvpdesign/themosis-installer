@@ -220,6 +220,29 @@ class ConfigSpec extends ObjectBehavior
     }
 
     /**
+     * it should return is site public
+     *
+     * @return void
+     */
+    public function it_should_return_is_site_public()
+    {
+        $this->isSitePublic()->shouldReturn(true);
+    }
+
+    /**
+     * it should set is site public
+     *
+     * @return void
+     */
+    public function it_should_set_is_site_public()
+    {
+        $isSitePublic = false;
+
+        $this->setIsSitePublic($isSitePublic);
+        $this->isSitePublic()->shouldReturn($isSitePublic);
+    }
+
+    /**
      * it should return an admin user
      *
      * @return void
