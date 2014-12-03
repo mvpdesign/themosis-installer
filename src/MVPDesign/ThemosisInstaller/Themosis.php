@@ -232,14 +232,14 @@ class Themosis
                 Helper::formatQuestion('Generate WordPress Salts', $this->isGeneratingWordPressSalts() ? 'y' : 'n'),
                 "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
                 false,
-                $this->isGeneratingWordPressSalts()
+                $this->isGeneratingWordPressSalts() ? 'y' : 'n'
             );
 
             $installingWordpress = $io->askAndValidate(
                 Helper::formatQuestion('Install WordPress', $this->isInstallingWordPress() ? 'y' : 'n'),
                 "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
                 false,
-                $this->isInstallingWordPress()
+                $this->isInstallingWordPress() ? 'y' : 'n'
             );
 
             // save the answers
@@ -271,7 +271,7 @@ class Themosis
                     Helper::formatQuestion('Site visible to search engines', $config->isSitePublic() ? 'y' : 'n'),
                     "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
                     false,
-                    $config->isSitePublic()
+                    $config->isSitePublic() ? 'y' : 'n'
                 );
 
                 $adminUser = $io->askAndValidate(
