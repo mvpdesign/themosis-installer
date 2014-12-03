@@ -30,7 +30,7 @@ class Themosis
      *
      * @var string
      */
-    private $theme = 'themosis-theme';
+    private $theme = 'themosis';
 
     /**
      * generating wordpress salts
