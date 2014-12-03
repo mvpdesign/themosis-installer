@@ -38,7 +38,14 @@ class Helper
      */
     public static function formatQuestion($question = '', $description = '')
     {
-        return '<info>' . $question . '</info> [<comment>' . $description . '</comment>]: ';
+        $formattedQuestion    = '<info>' . $question . '</info>';
+        $formattedDescription = '';
+
+        if (strlen($description) > 0) {
+            $formattedDescription = ' [<comment>' . $description . '</comment>]';
+        }
+
+        return $formattedQuestion . $formattedDescription . ': ';
     }
 
     /**
