@@ -5,6 +5,7 @@ namespace MVPDesign\ThemosisInstaller;
 use MVPDesign\ThemosisInstaller\InvalidStringLengthException;
 use MVPDesign\ThemosisInstaller\InvalidEmailException;
 use MVPDesign\ThemosisInstaller\InvalidURLException;
+use MVPDesign\ThemosisInstaller\InvalidConfirmationException;
 
 class Helper
 {
@@ -38,13 +39,20 @@ class Helper
      */
     public static function formatQuestion($question = '', $description = '')
     {
-        return '<info>' . $question . '</info> [<comment>' . $description . '</comment>]: ';
+        $formattedQuestion    = '<info>' . $question . '</info>';
+        $formattedDescription = '';
+
+        if (strlen($description) > 0) {
+            $formattedDescription = ' [<comment>' . $description . '</comment>]';
+        }
+
+        return $formattedQuestion . $formattedDescription . ': ';
     }
 
     /**
      * validate string
      *
-     * @return void
+     * @return string
      */
     public static function validateString($string)
     {
@@ -58,7 +66,7 @@ class Helper
     /**
      * validate email
      *
-     * @return void
+     * @return string
      */
     public static function validateEmail($email)
     {
@@ -72,7 +80,7 @@ class Helper
     /**
      * validate url
      *
-     * @return void
+     * @return string
      */
     public static function validateURL($url)
     {
@@ -81,5 +89,21 @@ class Helper
         }
 
         return $url;
+    }
+
+    /**
+     * validate confirmation
+     *
+     * @return string
+     */
+    public static function validateConfirmation($response)
+    {
+        $validResponses = array('y', 'n');
+
+        if (! in_array($response, $validResponses)) {
+            throw new InvalidConfirmationException('Valid responses are: ' . implode(', ', $validResponses) . '.');
+        }
+
+        return $response;
     }
 }

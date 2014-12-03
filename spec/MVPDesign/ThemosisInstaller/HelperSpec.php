@@ -56,4 +56,58 @@ class HelperSpec extends ObjectBehavior
 
         $this->formatQuestion($label, $default)->shouldReturn('<info>' . $label . '</info> [<comment>' . $default . '</comment>]: ');
     }
+
+    /**
+     * it should validate strings
+     *
+     * @return void
+     */
+    public function it_should_validate_strings()
+    {
+        $string = Argument::type('string');
+
+        $this->shouldThrow(new \MVPDesign\ThemosisInstaller\InvalidStringLengthException('The string must have a length greater than 0.'))->duringValidateString("");
+        $this->validateString($string)->shouldReturn($string);
+    }
+
+    /**
+     * it should validate emails
+     *
+     * @return void
+     */
+    public function it_should_validate_emails()
+    {
+        $email = 'email@example.com';
+
+        $this->shouldThrow(new \MVPDesign\ThemosisInstaller\InvalidEmailException('The email is not valid.'))->duringValidateEmail("");
+        $this->validateEmail($email)->shouldReturn($email);
+    }
+
+    /**
+     * it should validate urls
+     *
+     * @return void
+     */
+    public function it_should_validate_urls()
+    {
+        $url = 'http://localhost';
+
+        $this->shouldThrow(new \MVPDesign\ThemosisInstaller\InvalidURLException('The url is not valid.'))->duringValidateURL("");
+        $this->validateURL($url)->shouldReturn($url);
+    }
+
+    /**
+     * it should validate confirmations
+     *
+     * @return void
+     */
+    public function it_should_validate_confirmations()
+    {
+        $confirmationY = 'y';
+        $confirmationN = 'n';
+
+        $this->shouldThrow(new \MVPDesign\ThemosisInstaller\InvalidConfirmationException('Valid responses are: y, n.'))->duringValidateConfirmation("");
+        $this->validateConfirmation($confirmationY)->shouldReturn($confirmationY);
+        $this->validateConfirmation($confirmationN)->shouldReturn($confirmationN);
+    }
 }

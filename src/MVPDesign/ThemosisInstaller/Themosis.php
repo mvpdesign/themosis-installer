@@ -33,6 +33,13 @@ class Themosis
     private $theme = 'themosis';
 
     /**
+     * storage path
+     *
+     * @var string
+     */
+    private $storagePath = 'app/storage';
+
+    /**
      * generating wordpress salts
      *
      * @var bool
@@ -99,6 +106,16 @@ class Themosis
     }
 
     /**
+     * get the storage path
+     *
+     * @return string
+     */
+    public function getStoragePath()
+    {
+        return $this->storagePath;
+    }
+
+    /**
      * is generating wordpress salts
      *
      * @return bool
@@ -158,42 +175,53 @@ class Themosis
                 false,
                 $config->getDbName()
             );
+
             $dbUser = $io->askAndValidate(
                 Helper::formatQuestion('Database user', $config->getDbUser()),
                 "MVPDesign\ThemosisInstaller\Helper::validateString",
                 false,
                 $config->getDbUser()
             );
+
             $dbPassword = $io->askAndValidate(
                 Helper::formatQuestion('Database passsword', $config->getDbPassword()),
                 "MVPDesign\ThemosisInstaller\Helper::validateString",
                 false,
                 $config->getDbPassword()
             );
+
             $dbHost = $io->askAndValidate(
                 Helper::formatQuestion('Database host', $config->getDbHost()),
                 "MVPDesign\ThemosisInstaller\Helper::validateString",
                 false,
                 $config->getDbHost()
             );
+
             $environment = $io->askAndValidate(
                 Helper::formatQuestion('Environment', $config->getEnvironment()),
                 "MVPDesign\ThemosisInstaller\Config::validateEnvironment",
                 false,
                 $config->getEnvironment()
             );
+
             $siteUrl = $io->askAndValidate(
                 Helper::formatQuestion('Site URL', $config->getSiteUrl()),
                 "MVPDesign\ThemosisInstaller\Helper::validateURL",
                 false,
                 $config->getSiteUrl()
             );
-            $generatingWordPressSalts = $io->askConfirmation(
+
+            $generatingWordPressSalts = $io->askAndValidate(
                 Helper::formatQuestion('Generate WordPress Salts', $this->isGeneratingWordPressSalts() ? 'y' : 'n'),
+                "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
+                false,
                 $this->isGeneratingWordPressSalts()
             );
-            $installingWordpress = $io->askConfirmation(
+
+            $installingWordpress = $io->askAndValidate(
                 Helper::formatQuestion('Install WordPress', $this->isInstallingWordPress() ? 'y' : 'n'),
+                "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
+                false,
                 $this->isInstallingWordPress()
             );
 
@@ -215,6 +243,18 @@ class Themosis
                     "MVPDesign\ThemosisInstaller\Helper::validateString",
                     false,
                     $config->getSiteTitle()
+                );
+
+                $siteDescription = $io->ask(
+                    Helper::formatQuestion('Site Description', $config->getSiteDescription()),
+                    $config->getSiteDescription()
+                );
+
+                $isSitePublic = $io->askAndValidate(
+                    Helper::formatQuestion('Site visible to search engines', $config->isSitePublic() ? 'y' : 'n'),
+                    "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
+                    false,
+                    $config->isSitePublic()
                 );
 
                 $adminUser = $io->askAndValidate(
@@ -240,6 +280,8 @@ class Themosis
 
                 // save the answers
                 $config->setSiteTitle($siteTitle);
+                $config->setSiteDescription($siteDescription);
+                $config->setIsSitePublic($isSitePublic == 'y' ? true : false);
                 $config->setAdminUser($adminUser);
                 $config->setAdminPassword($adminPassword);
                 $config->setAdminEmail($adminEmail);
@@ -268,8 +310,14 @@ class Themosis
             // install the wordpress database
             $this->installWordpress();
 
+            // customize wordpress options
+            $this->customizeWordPressOptions();
+
             // activate the wordpress theme
             $this->activateWordPressTheme();
+
+            // make the themosis storage directory writable
+            $this->makeThemosisThemeStorageDirectoryWritable();
         }
 
         $io->write('Themosis installation complete.');
@@ -357,13 +405,40 @@ class Themosis
     }
 
     /**
+     * customize wordpress options
+     *
+     * @return void
+     */
+    private function customizeWordPressOptions()
+    {
+        $config  = $this->getConfig();
+        $options = array();
+        $command = $this->getBinDirectory() . 'wp option update';
+
+        // add the options to update
+        $options['blogdescription'] = $config->getSiteDescription();
+        $options['blog_public']     = $config->isSitePublic() ? 1 : 0;
+
+        foreach ($options as $option => $value) {
+            $process = new Process($command . ' ' . $option . ' ' . $value);
+            $process->run();
+
+            if (! $process->isSuccessful()) {
+                throw new \RuntimeException($process->getErrorOutput());
+            }
+
+            echo $process->getOutput();
+        }
+    }
+
+    /**
      * activate the wordpress theme
      *
      * @return void
      */
     private function activateWordPressTheme()
     {
-        $command  = $this->getBinDirectory() . 'wp theme activate ' . $this->getTheme();
+        $command = $this->getBinDirectory() . 'wp theme activate ' . $this->getTheme();
 
         $process = new Process($command);
         $process->run();
@@ -373,6 +448,43 @@ class Themosis
         }
 
         echo $process->getOutput();
+    }
+
+    /**
+     * change themosis theme storage directory permissions
+     *
+     * @return void
+     */
+    private function makeThemosisThemeStorageDirectoryWritable()
+    {
+        $io = $this->getIO();
+
+        // retrieve the theme path
+        $themePathCommand  = $this->getBinDirectory() . 'wp theme path ' . $this->getTheme();
+        $themePathCommand .= ' --dir';
+
+        $themePathProcess = new Process($themePathCommand);
+        $themePathProcess->run();
+
+        if (! $themePathProcess->isSuccessful()) {
+            throw new \RuntimeException($themePathProcess->getErrorOutput());
+        }
+
+        // generate the theme storage path
+        $storagePath    = $themePathProcess->getOutput() . '/' . $this->getStoragePath();
+        $storagePath    = str_replace(array("\n", "\r"), '', $storagePath);
+
+        // make the storage directory writable
+        $storageWritableCommand = 'chmod -R 777 ' . $storagePath;
+
+        $storageWritableProcess = new Process($storageWritableCommand);
+        $storageWritableProcess->run();
+
+        if (! $storageWritableProcess->isSuccessful()) {
+            throw new \RuntimeException($storageWritableProcess->getErrorOutput());
+        }
+
+        $io->write('Themosis storage directory is now writable.');
     }
 
     /**

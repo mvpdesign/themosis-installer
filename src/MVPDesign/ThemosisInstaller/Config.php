@@ -67,6 +67,20 @@ class Config
     private $siteTitle;
 
     /**
+     * is site public
+     *
+     * @var string
+     */
+    private $isSitePublic = true;
+
+    /**
+     * site description
+     *
+     * @var string
+     */
+    private $siteDescription;
+
+    /**
      * admin user
      *
      * @var string
@@ -265,6 +279,48 @@ class Config
     public function setSiteTitle($siteTitle)
     {
         $this->siteTitle = $siteTitle;
+    }
+
+    /**
+     * is the site public
+     *
+     * @return bool
+     */
+    public function isSitePublic()
+    {
+        return $this->isSitePublic;
+    }
+
+    /**
+     * set is site public
+     *
+     * @param  bool $isSitePublic
+     * @return void
+     */
+    public function setIsSitePublic($isSitePublic)
+    {
+        $this->isSitePublic = $isSitePublic;
+    }
+
+    /**
+     * get the site description
+     *
+     * @return string
+     */
+    public function getSiteDescription()
+    {
+        return $this->siteDescription;
+    }
+
+    /**
+     * set the site description
+     *
+     * @param  string $siteDescription
+     * @return void
+     */
+    public function setSiteDescription($siteDescription)
+    {
+        $this->siteDescription = $siteDescription;
     }
 
     /**

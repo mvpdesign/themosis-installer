@@ -79,7 +79,17 @@ class ThemosisSpec extends ObjectBehavior
      */
     public function it_should_return_the_theme()
     {
-        $this->getTheme()->shouldReturn('themosis-theme');
+        $this->getTheme()->shouldReturn('themosis');
+    }
+
+    /**
+     * it should return the storage path
+     *
+     * @return void
+     */
+    public function it_should_return_the_storage_path()
+    {
+        $this->getStoragePath()->shouldReturn('app/storage');
     }
 
     /**
