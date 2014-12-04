@@ -1,6 +1,7 @@
 ### Miscellaneous
 .DS_Store
 Thumbs.db
+.env.local.php
 
 ### Composer
 composer.lock
