@@ -600,7 +600,7 @@ class Themosis
      */
     private function getCWD()
     {
-        return dirname(__FILE__) . "/../../../";
+        return dirname(__FILE__) . "/../";
     }
 
     /**
