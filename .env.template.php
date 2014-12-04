@@ -15,7 +15,7 @@ return array(
 
     // WordPress URLs
     'WP_HOME'           => '$WP_SITEURL',
-    'WP_SITEURL'        => '$WP_SITEURL/wp',
+    'WP_SITEURL'        => '$WP_SITEURL',
 
     /*----------------------------------------------------*/
     // Authentication unique keys and salts
