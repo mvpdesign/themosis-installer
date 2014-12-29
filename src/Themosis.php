@@ -477,7 +477,7 @@ class Themosis
         $options['page_on_front']   = 2;
 
         foreach ($options as $option => $value) {
-            $this->runProcess($command . ' ' . $option . ' ' . $value, "Updated WordPress option '" . $option . "' to '" . $value . "'.", false, true);
+            $this->runProcess($command . ' ' . $option . ' "' . $value . '"', "Updated WordPress option '" . $option . "' to '" . $value . "'.", false, true);
         }
     }
 
