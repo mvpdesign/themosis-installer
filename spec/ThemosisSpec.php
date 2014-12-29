@@ -149,6 +149,29 @@ class ThemosisSpec extends ObjectBehavior
     }
 
     /**
+     * it should return is configuring themosis theme
+     *
+     * @return void
+     */
+    public function it_should_return_is_configuring_themosis_theme()
+    {
+        $this->isConfiguringThemosisTheme()->shouldReturn(true);
+    }
+
+    /**
+     * it should set configuring themosis theme
+     *
+     * @return void
+     */
+    public function it_should_set_configuring_themosis_theme()
+    {
+        $isConfiguringThemosisTheme = false;
+
+        $this->setConfiguringThemosisTheme($isConfiguringThemosisTheme);
+        $this->isConfiguringThemosisTheme()->shouldReturn($isConfiguringThemosisTheme);
+    }
+
+    /**
      * it should install
      *
      * @return void

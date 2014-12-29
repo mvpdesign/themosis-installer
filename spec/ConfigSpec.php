@@ -110,6 +110,29 @@ class ConfigSpec extends ObjectBehavior
     }
 
     /**
+     * it should return a database prefix
+     *
+     * @return void
+     */
+    public function it_should_return_a_database_prefix()
+    {
+        $this->getDbPrefix()->shouldReturn('mvpwp_');
+    }
+
+    /**
+     * it should set a database prefix
+     *
+     * @return void
+     */
+    public function it_should_set_a_database_prefix()
+    {
+        $dbPrefix = Argument::type('string');
+
+        $this->setDbPrefix($dbPrefix);
+        $this->getDbPrefix()->shouldReturn($dbPrefix);
+    }
+
+    /**
      * it should return a environment
      *
      * @return void

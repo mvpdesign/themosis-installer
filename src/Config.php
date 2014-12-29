@@ -35,6 +35,13 @@ class Config
     private $dbHost = 'localhost';
 
     /**
+     * database prefix
+     *
+     * @var string
+     */
+    private $dbPrefix = 'mvpwp_';
+
+    /**
      * environments
      *
      * @var string
@@ -199,6 +206,27 @@ class Config
     public function setDbHost($dbHost)
     {
         $this->dbHost = $dbHost;
+    }
+
+    /**
+     * get the database prefix
+     *
+     * @return string
+     */
+    public function getDbPrefix()
+    {
+        return $this->dbPrefix;
+    }
+
+    /**
+     * set the database prefix
+     *
+     * @param  string $dbPrefix
+     * @return void
+     */
+    public function setDbPrefix($dbPrefix)
+    {
+        $this->dbPrefix = $dbPrefix;
     }
 
     /**

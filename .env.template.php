@@ -12,6 +12,7 @@ return array(
     'DB_USER'           => '$DB_USER',
     'DB_PASSWORD'       => '$DB_PASSWORD',
     'DB_HOST'           => '$DB_HOST',
+    'DB_PREFIX'         => '$DB_PREFIX',
 
     // WordPress URLs
     'WP_HOME'           => '$WP_SITEURL',
