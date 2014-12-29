@@ -360,6 +360,9 @@ class Themosis
             // update the sample page
             $this->updateSamplePage();
 
+            // change admin user id
+            $this->changeAdminUserID();
+
             // customize wordpress options
             $this->customizeWordPressOptions();
 
@@ -665,6 +668,24 @@ class Themosis
         $command .= " --post_content='" . $postContent . "'";
 
         $this->runProcess($command, 'Refactored the sample WordPress page.', false, true);
+    }
+
+    /**
+     * change admin user id
+     *
+     * @return void
+     */
+    private function changeAdminUserID()
+    {
+        $oldAdminID = 1;
+        $newAdminID = 2;
+
+        $command  = $this->getBinDirectory() . 'wp db query "';
+        $command .= 'UPDATE wp_users SET ID=' . $newAdminID . ' WHERE ID=' . $oldAdminID . '; ';
+        $command .= 'UPDATE wp_usermeta SET user_id=' . $newAdminID . ' WHERE user_id=' . $oldAdminID . '; ';
+        $command .= 'UPDATE wp_posts SET post_author=' . $newAdminID . ' WHERE post_author=' . $oldAdminID . '"';
+
+        $this->runProcess($command, 'Changed admin user ID.', false, true);
     }
 
     /**
