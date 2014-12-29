@@ -336,6 +336,9 @@ class Themosis
             // make the themosis storage directory writable
             $this->makeThemosisThemeStorageDirectoryWritable();
 
+            // update the themosis theme style.css
+            $this->updateThemosisThemeStyleCSS();
+
             // remove the hello world comment
             $this->removeHelloWorldComment();
 
@@ -491,26 +494,62 @@ class Themosis
     }
 
     /**
+     * retrieve the theme path
+     *
+     * @return void
+     */
+    private function retrieveThemosisThemePath()
+    {
+        // retrieve the theme path
+        $themePathCommand  = $this->getBinDirectory() . 'wp theme path ' . $this->getTheme();
+        $themePathCommand .= ' --dir';
+
+        return $this->runProcess($themePathCommand, '', true);
+    }
+
+    /**
      * change themosis theme storage directory permissions
      *
      * @return void
      */
     private function makeThemosisThemeStorageDirectoryWritable()
     {
-        // retrieve the theme path
-        $themePathCommand  = $this->getBinDirectory() . 'wp theme path ' . $this->getTheme();
-        $themePathCommand .= ' --dir';
-
-        $themePath = $this->runProcess($themePathCommand, '', true);
-
         // generate the theme storage path
-        $storagePath    = $themePath . '/' . $this->getStoragePath();
-        $storagePath    = str_replace(array("\n", "\r"), '', $storagePath);
+        $storagePath = $this->retrieveThemosisThemePath() . '/' . $this->getStoragePath();
+        $storagePath = str_replace(array("\n", "\r"), '', $storagePath);
 
         // make the storage directory writable
         $storageWritableCommand = 'chmod -R 777 ' . $storagePath;
 
         $this->runProcess($storageWritableCommand, 'Themosis storage directory is now writable.', false, true);
+    }
+
+    /**
+     * update the information in the themosis theme style.css
+     *
+     * @return void
+     */
+    private function updateThemosisThemeStyleCSS()
+    {
+        $config = $this->getConfig();
+
+        // load the style.css file
+        $styleCSS = $this->retrieveThemosisThemePath() . '/' . 'style.css';
+
+        if (file_exists($styleCSS)) {
+            $style = file_get_contents($styleCSS);
+
+            // inject the style variables
+            $style = str_replace("Theme Name: Themosis", "Theme Name: " . $config->getSiteTitle(), $style);
+            $style = str_replace("Theme URI: http://framework.themosis.com/", "Theme URI: http://www.mvpdesign.com/", $style);
+            $style = str_replace("Author: Julien Lambé", "Author: MVP Marketing + Design", $style);
+            $style = str_replace("Description: Themosis framework theme.", "Description: " . $config->getSiteDescription(), $style);
+
+            // update the themosis style.css
+            file_put_contents($styleCSS, $style, LOCK_EX);
+
+            $io->write('Updated the themosis theme style.css.');
+        }
     }
 
     /**
