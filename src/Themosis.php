@@ -249,6 +249,13 @@ class Themosis
                 $config->getDbHost()
             );
 
+            $dbPrefix = $io->askAndValidate(
+                Helper::formatQuestion('Database prefix', $config->getDbPrefix()),
+                "MVPDesign\ThemosisInstaller\Helper::validateString",
+                false,
+                $config->getDbPrefix()
+            );
+
             $siteUrl = $io->askAndValidate(
                 Helper::formatQuestion('Site URL', $config->getSiteUrl()),
                 "MVPDesign\ThemosisInstaller\Helper::validateURL",
@@ -283,6 +290,7 @@ class Themosis
             $config->setDbUser($dbUser);
             $config->setDbPassword($dbPassword);
             $config->setDbHost($dbHost);
+            $config->setDbPrefix($dbPrefix);
             $config->setSiteUrl($siteUrl);
 
             $this->setGeneratingWordPressSalts($generatingWordPressSalts == 'y' ? true : false);
@@ -453,6 +461,7 @@ class Themosis
         $envTemplate = str_replace('$DB_USER', $config->getDbUser(), $envTemplate);
         $envTemplate = str_replace('$DB_PASSWORD', $config->getDbPassword(), $envTemplate);
         $envTemplate = str_replace('$DB_HOST', $config->getDbHost(), $envTemplate);
+        $envTemplate = str_replace('$DB_PREFIX', $config->getDbPrefix(), $envTemplate);
         $envTemplate = str_replace('$WP_SITEURL', $config->getSiteUrl(), $envTemplate);
         foreach ($config->getSalts() as $saltKey => $saltValue) {
             $envTemplate = str_replace('$' . $saltKey, $saltValue, $envTemplate);
