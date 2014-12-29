@@ -391,6 +391,9 @@ class Themosis
             // activate the wordpress theme
             $this->activateWordPressTheme();
 
+            // set the home template
+            $this->setHomeTemplate();
+
             // make the themosis storage directory writable
             $this->makeThemosisThemeStorageDirectoryWritable();
 
@@ -630,6 +633,22 @@ class Themosis
         $command = $this->getBinDirectory() . 'wp theme activate ' . $this->getTheme();
 
         $this->runProcess($command, "Activated the '" . ucfirst($this->getTheme()) . "' WordPress theme.", false, true);
+    }
+
+    /**
+     * set the home template
+     *
+     * @return void
+     */
+    private function setHomeTemplate()
+    {
+        $postID = 2;
+        $metaKey = '_themosisPageTemplate';
+        $metaValue = 'home';
+
+        $command = $this->getBinDirectory() . 'wp post meta set ' . $postID . ' ' . $metaKey . ' ' . $metaValue;
+
+        $this->runProcess($command, "Set the home page to the home themosis template.", false, true);
     }
 
     /**
