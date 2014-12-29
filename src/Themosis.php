@@ -54,11 +54,18 @@ class Themosis
     private $generatingWordPressSalts = true;
 
     /**
-     * install wordpress
+     * installing wordpress
      *
      * @var bool
      */
     private $installingWordPress = true;
+
+    /**
+     * configuring themosis theme
+     *
+     * @var bool
+     */
+    private $configuringThemosisTheme = true;
 
     /**
      * constructor
@@ -175,6 +182,27 @@ class Themosis
     }
 
     /**
+     * is configuring themosis theme
+     *
+     * @return bool
+     */
+    public function isConfiguringThemosisTheme()
+    {
+        return $this->configuringThemosisTheme;
+    }
+
+    /**
+     * set configuring themosis theme
+     *
+     * @param  bool $configuringThemosisTheme
+     * @return void
+     */
+    public function setConfiguringThemosisTheme($configuringThemosisTheme)
+    {
+        $this->configuringThemosisTheme = $configuringThemosisTheme;
+    }
+
+    /**
      * ask configuration questions
      *
      * @return void
@@ -242,6 +270,13 @@ class Themosis
                 $this->isInstallingWordPress() ? 'y' : 'n'
             );
 
+            $configuringThemosisTheme = $io->askAndValidate(
+                Helper::formatQuestion('Configure Themosis Theme', $this->isConfiguringThemosisTheme() ? 'y' : 'n'),
+                "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
+                false,
+                $this->isConfiguringThemosisTheme() ? 'y' : 'n'
+            );
+
             // save the answers
             $config->setEnvironment($environment);
             $config->setDbName($dbName);
@@ -252,6 +287,7 @@ class Themosis
 
             $this->setGeneratingWordPressSalts($generatingWordPressSalts == 'y' ? true : false);
             $this->setInstallingWordpress($installingWordpress == 'y' ? true : false);
+            $this->setConfiguringThemosisTheme($configuringThemosisTheme == 'y' ? true : false);
 
             // extra questions if installing wordpress
             if ($installingWordpress == 'y') {
@@ -326,10 +362,32 @@ class Themosis
         // update the environment hostnames
         $this->updateEnvironmentHostname();
 
+        // install wordpress
         if ($this->isInstallingWordpress()) {
             // install the wordpress database
             $this->installWordpress();
 
+            // remove the hello world comment
+            $this->removeHelloWorldComment();
+
+            // remove the hello world post
+            $this->removeHelloWorldPost();
+
+            // update the sample page
+            $this->updateSamplePage();
+
+            // change admin user id
+            $this->changeAdminUserID();
+
+            // customize wordpress options
+            $this->customizeWordPressOptions();
+
+            // update the rewrite rules
+            $this->updateRewriteRules();
+        }
+
+        // configure themosis theme
+        if ($this->isConfiguringThemosisTheme()) {
             // activate the wordpress theme
             $this->activateWordPressTheme();
 
@@ -350,24 +408,6 @@ class Themosis
 
             // deploy themosis theme assets
             $this->deployThemosisThemeAssets();
-
-            // remove the hello world comment
-            $this->removeHelloWorldComment();
-
-            // remove the hello world post
-            $this->removeHelloWorldPost();
-
-            // update the sample page
-            $this->updateSamplePage();
-
-            // change admin user id
-            $this->changeAdminUserID();
-
-            // customize wordpress options
-            $this->customizeWordPressOptions();
-
-            // update the rewrite rules
-            $this->updateRewriteRules();
         }
 
         $io->write('Themosis installation complete.');
@@ -473,6 +513,72 @@ class Themosis
 
         $this->runProcess($command, 'WordPress installed successfully.');
     }
+   /**
+     * remove hello world comment
+     *
+     * @return void
+     */
+    private function removeHelloWorldComment()
+    {
+        $commentID = 1;
+
+        $command  = $this->getBinDirectory() . 'wp comment delete ' . $commentID;
+        $command .= ' --force';
+
+        $this->runProcess($command, 'Removed hello world WordPress comment.', false, true);
+    }
+
+    /**
+     * remove hello world post
+     *
+     * @return void
+     */
+    private function removeHelloWorldPost()
+    {
+        $postID = 1;
+
+        $command  = $this->getBinDirectory() . 'wp post delete ' . $postID;
+        $command .= ' --force';
+
+        $this->runProcess($command, 'Removed hello world WordPress post.', false, true);
+    }
+
+    /**
+     * update sample page
+     *
+     * @return void
+     */
+    private function updateSamplePage()
+    {
+        $postID      = 2;
+        $postTitle   = 'Home';
+        $postContent = '\\';
+
+        $command  = $this->getBinDirectory() . "wp post update " . $postID;
+        $command .= " --post_title='" . $postTitle . "'";
+        $command .= " --post_name='" . str_replace(' ', '-', strtolower($postTitle)) . "'";
+        $command .= " --post_content='" . $postContent . "'";
+
+        $this->runProcess($command, 'Refactored the sample WordPress page.', false, true);
+    }
+
+    /**
+     * change admin user id
+     *
+     * @return void
+     */
+    private function changeAdminUserID()
+    {
+        $oldAdminID = 1;
+        $newAdminID = 2;
+
+        $command  = $this->getBinDirectory() . 'wp db query "';
+        $command .= 'UPDATE wp_users SET ID=' . $newAdminID . ' WHERE ID=' . $oldAdminID . '; ';
+        $command .= 'UPDATE wp_usermeta SET user_id=' . $newAdminID . ' WHERE user_id=' . $oldAdminID . '; ';
+        $command .= 'UPDATE wp_posts SET post_author=' . $newAdminID . ' WHERE post_author=' . $oldAdminID . '"';
+
+        $this->runProcess($command, 'Changed admin user ID.', false, true);
+    }
 
     /**
      * customize wordpress options
@@ -497,6 +603,24 @@ class Themosis
     }
 
     /**
+     * update rewrite rules
+     *
+     * @return void
+     */
+    private function updateRewriteRules()
+    {
+        $structure    = "/%category%/%postname%/";
+        $categoryBase = "/category/";
+        $tagBase      = "/tag/";
+
+        $command  = $this->getBinDirectory() . "wp rewrite structure '" . $structure . "'";
+        $command .= ' --category-base=' . $categoryBase;
+        $command .= ' --tag-base=' . $tagBase;
+
+        $this->runProcess($command, 'Updated the WordPress rewrite structure.', false, true);
+    }
+
+    /**
      * activate the wordpress theme
      *
      * @return void
@@ -506,23 +630,6 @@ class Themosis
         $command = $this->getBinDirectory() . 'wp theme activate ' . $this->getTheme();
 
         $this->runProcess($command, "Activated the '" . ucfirst($this->getTheme()) . "' WordPress theme.", false, true);
-    }
-
-    /**
-     * retrieve the theme path
-     *
-     * @return void
-     */
-    private function retrieveThemosisThemePath($path = '')
-    {
-        // retrieve the theme path
-        $themePathCommand  = $this->getBinDirectory() . 'wp theme path ' . $this->getTheme();
-        $themePathCommand .= ' --dir';
-
-        $themePath = $this->runProcess($themePathCommand, '', true) . '/' . $path;
-        $themePath = str_replace(array("\n", "\r"), '', $themePath);
-
-        return $themePath;
     }
 
     /**
@@ -622,88 +729,20 @@ class Themosis
     }
 
     /**
-     * remove hello world comment
+     * retrieve the theme path
      *
      * @return void
      */
-    private function removeHelloWorldComment()
+    private function retrieveThemosisThemePath($path = '')
     {
-        $commentID = 1;
+        // retrieve the theme path
+        $themePathCommand  = $this->getBinDirectory() . 'wp theme path ' . $this->getTheme();
+        $themePathCommand .= ' --dir';
 
-        $command  = $this->getBinDirectory() . 'wp comment delete ' . $commentID;
-        $command .= ' --force';
+        $themePath = $this->runProcess($themePathCommand, '', true) . '/' . $path;
+        $themePath = str_replace(array("\n", "\r"), '', $themePath);
 
-        $this->runProcess($command, 'Removed hello world WordPress comment.', false, true);
-    }
-
-    /**
-     * remove hello world post
-     *
-     * @return void
-     */
-    private function removeHelloWorldPost()
-    {
-        $postID = 1;
-
-        $command  = $this->getBinDirectory() . 'wp post delete ' . $postID;
-        $command .= ' --force';
-
-        $this->runProcess($command, 'Removed hello world WordPress post.', false, true);
-    }
-
-    /**
-     * update sample page
-     *
-     * @return void
-     */
-    private function updateSamplePage()
-    {
-        $postID      = 2;
-        $postTitle   = 'Home';
-        $postContent = '\\';
-
-        $command  = $this->getBinDirectory() . "wp post update " . $postID;
-        $command .= " --post_title='" . $postTitle . "'";
-        $command .= " --post_name='" . str_replace(' ', '-', strtolower($postTitle)) . "'";
-        $command .= " --post_content='" . $postContent . "'";
-
-        $this->runProcess($command, 'Refactored the sample WordPress page.', false, true);
-    }
-
-    /**
-     * change admin user id
-     *
-     * @return void
-     */
-    private function changeAdminUserID()
-    {
-        $oldAdminID = 1;
-        $newAdminID = 2;
-
-        $command  = $this->getBinDirectory() . 'wp db query "';
-        $command .= 'UPDATE wp_users SET ID=' . $newAdminID . ' WHERE ID=' . $oldAdminID . '; ';
-        $command .= 'UPDATE wp_usermeta SET user_id=' . $newAdminID . ' WHERE user_id=' . $oldAdminID . '; ';
-        $command .= 'UPDATE wp_posts SET post_author=' . $newAdminID . ' WHERE post_author=' . $oldAdminID . '"';
-
-        $this->runProcess($command, 'Changed admin user ID.', false, true);
-    }
-
-    /**
-     * update rewrite rules
-     *
-     * @return void
-     */
-    private function updateRewriteRules()
-    {
-        $structure    = "/%category%/%postname%/";
-        $categoryBase = "/category/";
-        $tagBase      = "/tag/";
-
-        $command  = $this->getBinDirectory() . "wp rewrite structure '" . $structure . "'";
-        $command .= ' --category-base=' . $categoryBase;
-        $command .= ' --tag-base=' . $tagBase;
-
-        $this->runProcess($command, 'Updated the WordPress rewrite structure.', false, true);
+        return $themePath;
     }
 
     /**
