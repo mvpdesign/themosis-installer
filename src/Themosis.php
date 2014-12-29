@@ -186,6 +186,13 @@ class Themosis
 
         if ($io->isInteractive()) {
             // get answers to our questions
+            $environment = $io->askAndValidate(
+                Helper::formatQuestion('Environment', $config->getEnvironment()),
+                "MVPDesign\ThemosisInstaller\Config::validateEnvironment",
+                false,
+                $config->getEnvironment()
+            );
+
             $dbName = $io->askAndValidate(
                 Helper::formatQuestion('Database name', $config->getDbName()),
                 "MVPDesign\ThemosisInstaller\Helper::validateString",
@@ -214,13 +221,6 @@ class Themosis
                 $config->getDbHost()
             );
 
-            $environment = $io->askAndValidate(
-                Helper::formatQuestion('Environment', $config->getEnvironment()),
-                "MVPDesign\ThemosisInstaller\Config::validateEnvironment",
-                false,
-                $config->getEnvironment()
-            );
-
             $siteUrl = $io->askAndValidate(
                 Helper::formatQuestion('Site URL', $config->getSiteUrl()),
                 "MVPDesign\ThemosisInstaller\Helper::validateURL",
@@ -243,12 +243,12 @@ class Themosis
             );
 
             // save the answers
+            $config->setEnvironment($environment);
             $config->setDbName($dbName);
             $config->setDbUser($dbUser);
             $config->setDbPassword($dbPassword);
             $config->setDbHost($dbHost);
             $config->setSiteUrl($siteUrl);
-            $config->setEnvironment($environment);
 
             $this->setGeneratingWordPressSalts($generatingWordPressSalts == 'y' ? true : false);
             $this->setInstallingWordpress($installingWordpress == 'y' ? true : false);
@@ -338,6 +338,18 @@ class Themosis
 
             // update the themosis theme style.css
             $this->updateThemosisThemeStyleCSS();
+
+            // install themosis theme node packages
+            $this->installThemosisThemeNodePackages();
+
+            // install themosis theme composer dependencies
+            $this->installThemosisThemeComposerDependencies();
+
+            // install themosis theme bower components
+            $this->installThemosisThemeBowerComponents();
+
+            // deploy themosis theme assets
+            $this->deployThemosisThemeAssets();
 
             // remove the hello world comment
             $this->removeHelloWorldComment();
@@ -557,6 +569,56 @@ class Themosis
     }
 
     /**
+     * install themosis theme node packages
+     *
+     * @return void
+     */
+    private function installThemosisThemeNodePackages()
+    {
+        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && npm install';
+
+        $this->runProcess($command, 'Installed node packages.', false, true);
+    }
+
+    /**
+     * install themosis theme composer dependencies
+     *
+     * @return void
+     */
+    private function installThemosisThemeComposerDependencies()
+    {
+        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && composer install';
+
+        $this->runProcess($command, 'Installed composer dependencies.', false, true);
+    }
+
+    /**
+     * install themosis theme bower components
+     *
+     * @return void
+     */
+    private function installThemosisThemeBowerComponents()
+    {
+        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && bower install';
+
+        $this->runProcess($command, 'Installed bower components.', false, true);
+    }
+
+    /**
+     * deploy themosis theme assets
+     *
+     * @return void
+     */
+    private function deployThemosisThemeAssets()
+    {
+        $config = $this->getConfig();
+
+        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && gulp --silent deloy:' . $config->getEnvironment();
+
+        $this->runProcess($command, 'Deployed themosis theme assets.', false, true);
+    }
+
+    /**
      * remove hello world comment
      *
      * @return void
@@ -660,6 +722,7 @@ class Themosis
         $io = $this->getIO();
 
         $process = new Process($command);
+        $process->setTimeout(3600);
         $process->run();
 
         if (! $process->isSuccessful()) {
