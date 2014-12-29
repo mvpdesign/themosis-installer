@@ -498,13 +498,16 @@ class Themosis
      *
      * @return void
      */
-    private function retrieveThemosisThemePath()
+    private function retrieveThemosisThemePath($path = '')
     {
         // retrieve the theme path
         $themePathCommand  = $this->getBinDirectory() . 'wp theme path ' . $this->getTheme();
         $themePathCommand .= ' --dir';
 
-        return $this->runProcess($themePathCommand, '', true);
+        $themePath = $this->runProcess($themePathCommand, '', true) . '/' . $path;
+        $themePath = str_replace(array("\n", "\r"), '', $themePath);
+
+        return $themePath;
     }
 
     /**
@@ -515,8 +518,7 @@ class Themosis
     private function makeThemosisThemeStorageDirectoryWritable()
     {
         // generate the theme storage path
-        $storagePath = $this->retrieveThemosisThemePath() . '/' . $this->getStoragePath();
-        $storagePath = str_replace(array("\n", "\r"), '', $storagePath);
+        $storagePath = $this->retrieveThemosisThemePath($this->getStoragePath());
 
         // make the storage directory writable
         $storageWritableCommand = 'chmod -R 777 ' . $storagePath;
@@ -532,9 +534,10 @@ class Themosis
     private function updateThemosisThemeStyleCSS()
     {
         $config = $this->getConfig();
+        $io     = $this->getIO();
 
         // load the style.css file
-        $styleCSS = $this->retrieveThemosisThemePath() . '/' . 'style.css';
+        $styleCSS = $this->retrieveThemosisThemePath('style.css');
 
         if (file_exists($styleCSS)) {
             $style = file_get_contents($styleCSS);
@@ -543,6 +546,7 @@ class Themosis
             $style = str_replace("Theme Name: Themosis", "Theme Name: " . $config->getSiteTitle(), $style);
             $style = str_replace("Theme URI: http://framework.themosis.com/", "Theme URI: http://www.mvpdesign.com/", $style);
             $style = str_replace("Author: Julien Lambé", "Author: MVP Marketing + Design", $style);
+            $style = str_replace("Author URI: http://www.themosis.com/", "Author URI: http://www.mvpdesign.com/", $style);
             $style = str_replace("Description: Themosis framework theme.", "Description: " . $config->getSiteDescription(), $style);
 
             // update the themosis style.css
