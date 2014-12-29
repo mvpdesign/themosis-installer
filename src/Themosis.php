@@ -8,6 +8,7 @@ use Composer\Composer;
 use Symfony\Component\Process\Process;
 use MVPDesign\ThemosisInstaller\Config;
 use MVPDesign\ThemosisInstaller\Helper;
+use MVPDesign\ThemosisInstaller\CodeceptionConfig;
 
 class Themosis
 {
@@ -419,6 +420,8 @@ class Themosis
 
             // deploy themosis theme assets
             $this->deployThemosisThemeAssets();
+
+            $this->updateCodeceptionConfig();
         }
 
         $io->write('Themosis installation complete.');
@@ -756,6 +759,19 @@ class Themosis
         $this->runProcess($command, 'Deployed themosis theme assets.', false, true);
     }
 
+    /**
+     * Runs the codeception config updater.
+     *
+     * @return void
+     */
+    private function updateCodeceptionConfig()
+    {
+        $environment = 'local';
+
+        $config = new CodeceptionConfig;
+
+        $config->updateWith($environment);
+    }
     /**
      * retrieve the theme path
      *
