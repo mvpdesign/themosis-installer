@@ -22,14 +22,20 @@ class CodeceptionConfig
      *
      * @var $working_directory
      */
-	private $working_directory;
+	private $workingDirectory;
 
+	/**
+     * An Array of files in the current directory
+     *
+     * @var $filesInCurrentDirectory
+     */
+	private $filesInCurrentDirectory;
     /**
      * The site url to update the Codeception config with
      *
      * @var $site_url
      */
-	private $site_url;
+	private $siteUrl;
 
     /**
      * The path to the .env.{$environment}.php file
@@ -83,9 +89,9 @@ class CodeceptionConfig
     /**
      * The environments accepted to run this class
      *
-     * @var $possible_environments
+     * @var $possibleEnvironments
      */
-	private $possible_environments = array( 
+	private $possibleEnvironments = array( 
  
 				"local" => "local",
 			    "staging" => "staging",
@@ -94,14 +100,32 @@ class CodeceptionConfig
 			);
 
 	/**
-	 * constructor assigns the current working directory and the $environment
+	 * Sets the environment property
+	 *
+	 * @return void
 	 */
-	public function __construct()
+	private function setEnvironment($environment)
 	{
-	
+
+		$this->environment = $environment;
+
 	}
 
 	/**
+	 * Sets the working directory
+	 *
+	 * @return void
+	 */
+	private function setWorkingDirectory()
+	{
+
+		$this->workingDirectory = getcwd();
+
+	}
+
+	/**
+	 * Sets the path to the environment file
+	 * 
      * @param string $FilePath
      *
 	 * @return string $this->environmentFilePath
@@ -112,31 +136,219 @@ class CodeceptionConfig
 	}
 
 	/**
-	 * Getter for the environmentFilePath property 
-	 *
-	 * @return string $this->environmentFile
-	 */
-	public function getEnvironmentFilePath()
-	{
-
-		return $this->environmentFilePath;
-	
-	}
-
-	/**
 	 * Gets the path to the acceptance suite config file 
-     *
-	 * @param string $TestingDirectory
 	 *
 	 * @return string $this->acceptanceConfigDirectory
 	 */
-	public function setAcceptanceConfigYmlPath($TestingDirectory)
+	public function setAcceptanceConfigYmlPath()
 	{
+
+		$TestingDirectory = $this->getPathToTestingDir();
 
 		return  $this->acceptanceConfigFilePath = $TestingDirectory . '/'. 'acceptance.suite.yml';
 	
 	}
 
+	/**
+	 * Sets the filesInCurrentDirectory property
+	 *
+	 * @param string $current_directory
+	 *
+	 * @return $this->filesInCurrentDirectory
+	 */
+	private function setFilesInCurrentDirectory($currentDirectory)
+	{
+
+		return $this->filesInCurrentDirectory = scandir($currentDirectory);
+
+	}
+
+	/**
+	 * Sets the path to the testing directory
+	 * 
+	 * @param string pathToTestingDir
+	 *
+	 * @return string $this->pathToTestingDir
+	 */
+	private function setPathToTestingDirectory($pathToTestingDir)
+	{
+		return $this->pathToTestingDir = $pathToTestingDir;
+	}
+
+	/**
+	 * Sets the siteUrl property from a WP_HOME key in the specified .env.$environment.php file
+	 * 
+	 * @param array $environmentArray
+	 *
+	 * @return string $this->siteUrl
+	 */
+	private function setSiteUrlFrom($environmentArray)
+	{
+
+		if ( array_key_exists( 'WP_HOME', $environmentArray) )
+		{
+			return $this->siteUrl = $environmentArray['WP_HOME'];
+		}
+
+	}
+
+	private function setCodeceptionConfigPath($codeceptionConfigPath)
+	{
+
+		return $this->codeceptionConfigPath = $codeceptionConfigPath;
+
+	}
+
+	/**
+	 * Sets the root directory of the current project
+     *
+	 * @param $current_directory
+	 *
+	 * @return string $this->rootDirectory
+	 */
+	private function setProjectRootDirectory($current_directory)
+	{
+	
+		$this->rootDirectory = $current_directory;
+	
+	}
+
+	private function setAcceptanceConfigFile($FileAsArray)
+	{
+		return $this->acceptanceConfigFile = $FileAsArray;
+	}
+
+	/**
+	 * Gets the environment property 
+	 *
+	 * @return string $this->environment
+	 */
+	private function getEnvironment()
+	{
+		return $this->environment;
+	}
+	/**
+	 * Gets the environmentFilePath property 
+	 *
+	 * @return string $this->environmentFile
+	 */
+	public function getEnvironmentFilePath()
+	{
+		return $this->environmentFilePath;
+	}
+
+	/**
+	 * Gets the workingDirectory property 
+	 *
+	 * @return string $this->workingDirectory
+	 */
+	private function getWorkingDirectory()
+	{
+		return $this->workingDirectory;
+	}
+
+	/**
+	 * Gets the pathToTestingDir property 
+	 *
+	 * @return string $this->pathToTestingDir
+	 */
+	private function getPathToTestingDir()
+	{
+		return $this->pathToTestingDir;
+	}
+
+	/**
+	 * Gets the acceptanceConfigFile property 
+	 *
+	 * @return string $this->acceptanceConfigFile
+	 */
+	private function getAcceptanceConfigFile()
+	{
+		return $this->acceptanceConfigFile;
+	}
+
+	/**
+	 * Gets the acceptanceConfigFilePath property 
+	 *
+	 * @return string $this->acceptanceConfigFilePath
+	 */
+	private function getAcceptanceConfigFilePath()
+	{
+		return $this->acceptanceConfigFilePath;
+	}
+
+	/**
+	 * Gets the siteUrl property 
+	 *
+	 * @return string $this->siteUrl
+	 */
+	private function getSiteUrl()
+	{
+		return $this->siteUrl;
+	}
+
+	/**
+	 * Gets the rootDirectory property 
+	 *
+	 * @return string $this->rootDirectory
+	 */
+	private function getRootDirectory()
+	{
+		return $this->rootDirectory;
+	}
+
+	/**
+	 * Gets the EnvironmentArray property 
+	 *
+	 * @return string $this->EnvironmentArray
+	 */
+	private function getEnvironmentArray()
+	{
+		return $this->EnvironmentArray;
+	}
+
+	/**
+	 * Gets the getFilesInCurrentDirectory property 
+	 *
+	 * @return string $this->getFilesInCurrentDirectory
+	 */
+	private function getFilesInCurrentDirectory()
+	{
+		return $this->filesInCurrentDirectory;
+	}
+
+	/**
+	 * Gets the codeceptionConfigPath property 
+	 *
+	 * @return string $this->codeceptionConfigPath
+	 */
+	private function getCodeceptionConfigPath()
+	{
+		return $this->codeceptionConfigPath;
+	}
+
+	/**
+	 * Gets the possibleEnvironments property 
+	 *
+	 * @return string $this->possibleEnvironments
+	 */
+	private function getPossibleEnvironments()
+	{
+		return $this->possibleEnvironments;
+	}
+
+	/**
+	 * Returns a string containing the project's testing directory
+	 *
+	 * @param string $currentLineOfYmlFile
+	 *
+	 * @return string
+	 */
+	private function getTestingDirectoryFrom($currentLineOfYmlFile)
+	{
+		return trim(preg_replace('/\w+:/', ' ', $currentLineOfYmlFile));
+	}
+	
 	/**
 	 * Executes the class functions
 	 *
@@ -147,49 +359,32 @@ class CodeceptionConfig
 	public function updateWith($environment)
 	{
 
-		$this->environment = $environment;
+		$this->setEnvironment($environment);
 
-		$this->working_directory = getcwd();
+		$this->setWorkingDirectory();
 
         $this->findEnvironmentFilePath();
 
         $this->setEnvironmentArrayFromEnvironmentFile();
 
-		$this->setSiteUrl();
+		$this->setSiteUrlFrom($this->getEnvironmentArray());
 
-        $this->findCodeceptionConfigFile($this->working_directory);
+        $this->findCodeceptionConfigFile($this->getWorkingDirectory());
 
         $CodeceptionYmlFile = $this->convertCodeceptionYmlToArray();
 
         $this->getTestingDirectoryIn($CodeceptionYmlFile);
 
-        $this->setAcceptanceConfigYmlPath($this->pathToTestingDir);
+        $this->setAcceptanceConfigYmlPath();
 
-        $this->convertAcceptanceConfigToArray($this->pathToTestingDir);
+        $this->convertAcceptanceConfigToArray();
 
         return $this->WriteProjectEnvironmentToAcceptanceConfig();
 
 	}
 
 	/**
-	 * Sets the site_url property from a WP_HOME key in the specified .env.$environment.php file
-	 *
-	 * @return string $this->site_url
-	 */
-	private function setSiteUrl()
-	{
-        $environmentArray = $this->EnvironmentArray;
-
-		if ( array_key_exists( 'WP_HOME', $environmentArray) )
-		{
-			return $this->site_url = $environmentArray['WP_HOME'];
-		}
-
-	}
-
-
-	/**
-	 * Checks if the supplied string is a valid environment
+	 * Throws exception if environment is not valid
      *
 	 * @return bool
      *
@@ -197,11 +392,7 @@ class CodeceptionConfig
 	private function checkForValidEnvironmentData()
 	{
 
-		$environment = $this->environment;
-
-		$possible_environments = $this->possible_environments;
-
-		if(in_array($environment, $possible_environments))
+		if( $this->environmentIsValid() )
 		{
 			return true;
 		}
@@ -213,15 +404,30 @@ class CodeceptionConfig
 	}
 
 	/**
+	 * Checks if the supplied string is a valid environment
+     *
+	 * @return bool
+	 */
+	private function environmentIsValid()
+	{
+
+		$environment = $this->getEnvironment();
+
+		$possibleEnvironments = $this->getPossibleEnvironments();
+
+		if ( in_array($environment, $possibleEnvironments) ) return true;
+	}
+
+	/**
 	 * Finds the environment file's location in the project files
      * 
 	 * @return void
 	 */
 	private function findEnvironmentFilePath()
 	{
-		$environment = $this->environment;
+		$environment = $this->getEnvironment();
 
-		$current_directory = $this->working_directory;
+		$current_directory = $this->getWorkingDirectory();
 
 		$targetFile = ".env.".$environment.".php";
 
@@ -242,12 +448,12 @@ class CodeceptionConfig
 	private function iterateOverProjectDirectoriesFor($targetFile, $current_directory)
 	{
 
-		while( false !== ($entry = scandir($current_directory)) )
+		while( $this->isValidDirectory($current_directory) )
 		{
 
-			$files_in_current_directory = scandir($current_directory);
+			$files_in_current_directory = $this->setFilesInCurrentDirectory($current_directory);
 
-			if ( in_array($targetFile, $files_in_current_directory) )
+			if ( $this->isInDirectory($targetFile) )
 			{
 
 				 return $this->setEnvironmentFilePath($current_directory . '/' . $targetFile);
@@ -256,6 +462,22 @@ class CodeceptionConfig
 
 			return $this->iterateOverProjectDirectoriesFor($targetFile, dirname($current_directory));
 		}
+	}
+
+	/**
+	 * Checks if the target file is found in the current directory
+	 *
+	 * @param string $targetFile
+	 *
+	 * @return bool
+	 */
+	private function isInDirectory($targetFile)
+	{
+
+		$files_in_current_directory  = $this->getFilesInCurrentDirectory();
+
+		if (in_array($targetFile, $files_in_current_directory)) return true;
+
 	}
 
 	/**
@@ -287,17 +509,17 @@ class CodeceptionConfig
 
 		$targetFile = "codeception.yml";
 
-		while( false !== ($entry = scandir($current_directory)) )
+		while( $this->isValidDirectory($current_directory) )
 		{
 
-			$files_in_current_directory = scandir($current_directory);
-	
-			if ( in_array($targetFile, $files_in_current_directory) )
+			$files_in_current_directory = $this->setFilesInCurrentDirectory($current_directory);
+
+			if ( $this->isInDirectory($targetFile) )
 			{
 
 				$this->setProjectRootDirectory($current_directory);
 
-				return $this->codeceptionConfigPath = $current_directory . '/' . $targetFile;
+				return $this->setCodeceptionConfigPath($current_directory . '/' . $targetFile);
 			}
 
 			return $this->findCodeceptionConfigFile(dirname($current_directory));
@@ -306,17 +528,13 @@ class CodeceptionConfig
 	}	
 
 	/**
-	 * Sets the root directory of the current project
+	 * Checks if the directory is not empty
      *
-	 * @param $current_directory
-	 *
-	 * @return string $this->rootDirectory
+	 * @return array $file
 	 */
-	private function setProjectRootDirectory($current_directory)
+	private function isValidDirectory($current_directory)
 	{
-	
-		$this->rootDirectory = $current_directory;
-	
+		if ( false !== ($check_directory = scandir($current_directory)) ) return true;
 	}
 
 	/**
@@ -326,7 +544,7 @@ class CodeceptionConfig
 	 */
 	private function convertCodeceptionYmlToArray()
 	{
-		$file = $this->codeceptionConfigPath;
+		$file = $this->getCodeceptionConfigPath();
 
 		return file($file);
 	}
@@ -341,15 +559,15 @@ class CodeceptionConfig
 	private function getTestingDirectoryIn($CodeceptionYmlFile)
 	{
 
-		for($count = 0; $count < count($CodeceptionYmlFile); $count++)
+		for($line = 0; $line < count($CodeceptionYmlFile); $line++)
 		{
 
-			$current_value = $CodeceptionYmlFile[$count];
+			$currentLineOfYmlFile = $CodeceptionYmlFile[$line];
 
-			if( strpos($current_value, 'tests:') )
+			if( strpos($currentLineOfYmlFile, 'tests:') )
 			{
 
-				return $this->pathToTestingDir = $this->rootDirectory . '/' . trim(preg_replace('/\w+:/', ' ', $current_value));
+				return $this->setPathToTestingDirectory($this->getRootDirectory() . '/' . $this->getTestingDirectoryFrom($currentLineOfYmlFile));
 				
 			}
 			
@@ -360,14 +578,14 @@ class CodeceptionConfig
 	/**
 	 * returns an array of the acceptance suite config file for editing in php
 	 *
-     * @param string $TestingDirectory
-     *
      * @return array $this->acceptanceConfigFile
 	 */
-	private function convertAcceptanceConfigToArray($TestingDirectory)
+	private function convertAcceptanceConfigToArray()
 	{
 
-		return $this->acceptanceConfigFile = file($TestingDirectory . '/' . 'acceptance.suite.yml');
+		$TestingDirectory = $this->getPathToTestingDir();
+
+		return $this->setAcceptanceConfigFile(file($TestingDirectory . '/' . 'acceptance.suite.yml'));
 
 	}
 
@@ -378,39 +596,37 @@ class CodeceptionConfig
      */
 	private function WriteProjectEnvironmentToAcceptanceConfig()
 	{
-        $acceptanceConfigFile = $this->acceptanceConfigFile;
+        $acceptanceConfigFile = $this->getAcceptanceConfigFile();
 
-        $acceptanceConfigPath = $this->acceptanceConfigFilePath;
+        $acceptanceConfigPath = $this->getAcceptanceConfigFilePath();
 
-        $updatedAcceptanceConfigFile = $this->saveEnvironmentUrlTo($acceptanceConfigFile);
+        $updatedAcceptanceConfigFile = $this->saveEnvironmentUrl();
 
 		file_put_contents($acceptanceConfigPath, $updatedAcceptanceConfigFile);
 
         return true;
 	}
 
+	
     /**
      * Iterates over the acceptance config array to write in the project's url
      *
-     * @param array
-     *
      * @return array
      */
-    private function saveEnvironmentUrlTo($acceptanceConfigFile)
+    private function saveEnvironmentUrl()
     {
-        $environmentUrl = $this->site_url;
+    	
+    	$acceptanceConfigFile = $this->getAcceptanceConfigFile();
 
-        for($count = 0; $count < count($acceptanceConfigFile); $count++)
+        for($line = 0; $line < count($acceptanceConfigFile); $line++)
         {
 
-            $current_value = $acceptanceConfigFile[$count];
+            $currentLineOfConfigFile = $acceptanceConfigFile[$line];
 
-            if( strpos($current_value, 'url:') )
+            if( strpos($currentLineOfConfigFile, 'url:') )
             {
 
-                $newUrl = preg_replace('/http:\/\/[\w\d\W]*/', $environmentUrl, $current_value);
-
-                $acceptanceConfigFile[$count] = $newUrl;
+                $acceptanceConfigFile[$line] = $this->updateUrlOn($currentLineOfConfigFile);
 
             }
 
@@ -419,5 +635,20 @@ class CodeceptionConfig
         return $acceptanceConfigFile;
     }
 
+    /**
+     * updates a url on the current line of the file being iterated over
+     *
+     * @param string $currentLineOfConfigFile
+     *
+     * @return string
+     */
+    private function updateUrlOn($currentLineOfConfigFile)
+    {
+
+    	$environmentUrl = $this->getSiteUrl();
+
+    	return preg_replace('/https?:\/\/[\w\d\W]*(?=\')/', $environmentUrl, $currentLineOfConfigFile);
+    
+    }
 
 }
