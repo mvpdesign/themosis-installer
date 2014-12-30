@@ -396,9 +396,6 @@ class Themosis
 
         // configure themosis theme
         if ($this->isConfiguringThemosisTheme()) {
-            // activate the wordpress theme
-            $this->activateWordPressTheme();
-
             // set the home template
             $this->setHomeTemplate();
 
@@ -428,6 +425,12 @@ class Themosis
 
             // deploy themosis theme assets
             $this->deployThemosisThemeAssets();
+
+            // rename the themosis theme directory
+            $this->renameThemosisThemeDirectory();
+
+            // activate the wordpress theme
+            $this->activateWordPressTheme();
         }
 
         $io->write('Themosis installation complete.');
@@ -649,9 +652,9 @@ class Themosis
      */
     private function activateWordPressTheme()
     {
-        $command = $this->getBinDirectory() . 'wp theme activate ' . $this->getTheme();
+        $command = $this->getBinDirectory() . 'wp theme activate ' . $this->getSiteSlug();
 
-        $this->runProcess($command, "Activated the '" . ucfirst($this->getTheme()) . "' WordPress theme.", false, true);
+        $this->runProcess($command, "Activated the '" . ucfirst($this->getSiteSlug()) . "' WordPress theme.", false, true);
     }
 
     /**
@@ -844,6 +847,20 @@ class Themosis
         $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && gulp --silent deloy:' . $config->getEnvironment();
 
         $this->runProcess($command, 'Deployed themosis theme assets.', false, true);
+    }
+
+    /**
+     * rename themosis theme directory
+     *
+     * @return void
+     */
+    private function renameThemosisThemeDirectory()
+    {
+        $config = $this->getConfig();
+
+        $command = 'mv ' . $this->retrieveThemosisThemePath() . ' ' . $this->retrieveThemosisThemePath('../' . $config->getSiteSlug());
+
+        $this->runProcess($command, 'Renamed themosis theme directory.', false, true);
     }
 
     /**
