@@ -760,7 +760,6 @@ class Themosis
 
         //'vendor/bin/codecept bootstrap'
         //'cp codeception-config.yml codeception.yml'
-        //'rm codeception-config.yml'
         //'cp -r tests codeception'
         //'rm -R tests'
         //'mkdir tests'
@@ -768,7 +767,7 @@ class Themosis
         //'rm -R codeception'
         //'vendor/bin/codecept generate:cept acceptance Home'
  
-        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && vendor/bin/codecept bootstrap && cp codeception-config.yml codeception.yml && rm codeception-config.yml && cp -r tests codeception && rm -R tests && mkdir tests && cp -r codeception tests/codeception && rm -R codeception && vendor/bin/codecept generate:cept acceptance Home'
+        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && vendor/bin/codecept bootstrap && cp codeception-config.yml codeception.yml && cp -r tests codeception && rm -R tests && mkdir tests && cp -r codeception tests/codeception && rm -R codeception && vendor/bin/codecept generate:cept acceptance Home'
         
         $this->runProcess($command, 'Initiated PhpSpec.', false, true);
 
