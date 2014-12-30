@@ -270,7 +270,7 @@ class Themosis
                 $this->isGeneratingWordPressSalts() ? 'y' : 'n'
             );
 
-            $installingWordpress = $io->askAndValidate(
+            $installingWordPress = $io->askAndValidate(
                 Helper::formatQuestion('Install WordPress', $this->isInstallingWordPress() ? 'y' : 'n'),
                 "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
                 false,
@@ -294,11 +294,11 @@ class Themosis
             $config->setSiteUrl($siteUrl);
 
             $this->setGeneratingWordPressSalts($generatingWordPressSalts == 'y' ? true : false);
-            $this->setInstallingWordpress($installingWordpress == 'y' ? true : false);
+            $this->setInstallingWordPress($installingWordPress == 'y' ? true : false);
             $this->setConfiguringThemosisTheme($configuringThemosisTheme == 'y' ? true : false);
 
             // extra questions if installing wordpress
-            if ($installingWordpress == 'y') {
+            if ($installingWordPress == 'y') {
                 $siteTitle = $io->askAndValidate(
                     Helper::formatQuestion('Site Title', $config->getSiteTitle()),
                     "MVPDesign\ThemosisInstaller\Helper::validateString",
@@ -371,9 +371,9 @@ class Themosis
         $this->updateEnvironmentHostname();
 
         // install wordpress
-        if ($this->isInstallingWordpress()) {
+        if ($this->isInstallingWordPress()) {
             // install the wordpress database
-            $this->installWordpress();
+            $this->installWordPress();
 
             // remove the hello world comment
             $this->removeHelloWorldComment();
