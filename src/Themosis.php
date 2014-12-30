@@ -581,13 +581,14 @@ class Themosis
      */
     private function changeAdminUserID()
     {
+        $config     = $this->getConfig();
         $oldAdminID = 1;
         $newAdminID = 2;
 
         $command  = $this->getBinDirectory() . 'wp db query "';
-        $command .= 'UPDATE wp_users SET ID=' . $newAdminID . ' WHERE ID=' . $oldAdminID . '; ';
-        $command .= 'UPDATE wp_usermeta SET user_id=' . $newAdminID . ' WHERE user_id=' . $oldAdminID . '; ';
-        $command .= 'UPDATE wp_posts SET post_author=' . $newAdminID . ' WHERE post_author=' . $oldAdminID . '"';
+        $command .= 'UPDATE ' . $config->getDbPrefix() . 'users SET ID=' . $newAdminID . ' WHERE ID=' . $oldAdminID . '; ';
+        $command .= 'UPDATE ' . $config->getDbPrefix() . 'usermeta SET user_id=' . $newAdminID . ' WHERE user_id=' . $oldAdminID . '; ';
+        $command .= 'UPDATE ' . $config->getDbPrefix() . 'posts SET post_author=' . $newAdminID . ' WHERE post_author=' . $oldAdminID . '"';
 
         $this->runProcess($command, 'Changed admin user ID.', false, true);
     }
