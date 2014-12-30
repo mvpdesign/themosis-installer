@@ -646,18 +646,6 @@ class Themosis
     }
 
     /**
-     * activate the wordpress theme
-     *
-     * @return void
-     */
-    private function activateWordPressTheme()
-    {
-        $command = $this->getBinDirectory() . 'wp theme activate ' . $this->getSiteSlug();
-
-        $this->runProcess($command, "Activated the '" . ucfirst($this->getSiteSlug()) . "' WordPress theme.", false, true);
-    }
-
-    /**
      * set the home template
      *
      * @return void
@@ -861,6 +849,20 @@ class Themosis
         $command = 'mv ' . $this->retrieveThemosisThemePath() . ' ' . $this->retrieveThemosisThemePath('../' . $config->getSiteSlug());
 
         $this->runProcess($command, 'Renamed themosis theme directory.', false, true);
+    }
+
+    /**
+     * activate the wordpress theme
+     *
+     * @return void
+     */
+    private function activateWordPressTheme()
+    {
+        $config = $this->getConfig();
+
+        $command = $this->getBinDirectory() . 'wp theme activate ' . $config->getSiteSlug();
+
+        $this->runProcess($command, "Activated the '" . ucfirst($config->getSiteSlug()) . "' WordPress theme.", false, true);
     }
 
     /**
