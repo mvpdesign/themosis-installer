@@ -517,11 +517,11 @@ class Themosis
         $adminEmail    = Helper::validateEmail($config->getAdminEmail());
 
         $command  = $this->getBinDirectory() . 'wp core install';
-        $command .= ' --url=' . $siteUrl;
-        $command .= ' --title=' . $siteTitle;
-        $command .= ' --admin_user=' . $adminUser;
-        $command .= ' --admin_password=' . $adminPassword;
-        $command .= ' --admin_email=' . $adminEmail;
+        $command .= ' --url="' . $siteUrl . '"';
+        $command .= ' --title="' . $siteTitle . '"';
+        $command .= ' --admin_user="' . $adminUser . '"';
+        $command .= ' --admin_password="' . $adminPassword . '"';
+        $command .= ' --admin_email="' . $adminEmail . '"';
 
         $this->runProcess($command, 'WordPress installed successfully.');
     }
