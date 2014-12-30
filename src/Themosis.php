@@ -421,7 +421,8 @@ class Themosis
             // deploy themosis theme assets
             $this->deployThemosisThemeAssets();
 
-            $this->updateCodeceptionConfig();
+            $this->initiateTestingSuites();
+
         }
 
         $io->write('Themosis installation complete.');
@@ -734,6 +735,88 @@ class Themosis
     }
 
     /**
+     * initiates all testing suites
+     *
+     * @return void
+     */
+    private function initiateTestingSuites()
+    {
+        $this->initiateCodeception();
+
+        $this->initiatePhpSpec();
+
+        $this->initiateBehat();
+
+    }
+
+    /**
+     * initiates codeception and builds an example test
+     *
+     * @return void
+     */
+    private function initiateCodeception()
+    {
+        //The parts that make up this command
+
+        //'vendor/bin/codecept bootstrap'
+        //'cp codeception-config.yml codeception.yml'
+        //'rm codeception-config.yml'
+        //'cp -r tests codeception'
+        //'rm -R tests'
+        //'mkdir tests'
+        //'cp -r codeception tests/codeception'
+        //'rm -R codeception'
+        //'vendor/bin/codecept generate:cept acceptance Home'
+ 
+        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && vendor/bin/codecept bootstrap && cp codeception-config.yml codeception.yml && rm codeception-config.yml && cp -r tests codeception && rm -R tests && mkdir tests && cp -r codeception tests/codeception && rm -R codeception && vendor/bin/codecept generate:cept acceptance Home'
+        
+        $this->runProcess($command, 'Initiated PhpSpec.', false, true);
+
+        $this->updateCodeceptionConfig();
+
+    }
+    /**
+     * Runs the codeception config updater.
+     *
+     * @return void
+     */
+    private function updateCodeceptionConfig()
+    {
+        $environment = 'local';
+
+        $config = new CodeceptionConfig;
+
+        $config->updateWith($environment);
+    }
+
+    /**
+     * initiates phpspec and builds an example function
+     *
+     * @return void
+     */
+    private function initiatePhpSpec()
+    {
+        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && vendor/bin/phpspec desc MVPDesign/ThemosisTheme/controllers/HomeController';
+
+        $this->runProcess($command , 'Initiated PhpSpec.', false, true);
+
+    }
+
+    /**
+     * initiates behat
+     *
+     * @return void
+     */
+    private function initiateBehat()
+    {
+
+        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && mkdir tests/features';
+
+        $this->runProcess($command , 'Initiated PhpSpec.', false, true);
+
+    }
+
+    /**
      * install themosis theme bower components
      *
      * @return void
@@ -759,19 +842,7 @@ class Themosis
         $this->runProcess($command, 'Deployed themosis theme assets.', false, true);
     }
 
-    /**
-     * Runs the codeception config updater.
-     *
-     * @return void
-     */
-    private function updateCodeceptionConfig()
-    {
-        $environment = 'local';
-
-        $config = new CodeceptionConfig;
-
-        $config->updateWith($environment);
-    }
+    
     /**
      * retrieve the theme path
      *
@@ -781,9 +852,11 @@ class Themosis
     {
         // retrieve the theme path
         $themePathCommand  = $this->getBinDirectory() . 'wp theme path ' . $this->getTheme();
+
         $themePathCommand .= ' --dir';
 
         $themePath = $this->runProcess($themePathCommand, '', true) . '/' . $path;
+
         $themePath = str_replace(array("\n", "\r"), '', $themePath);
 
         return $themePath;
