@@ -408,6 +408,15 @@ class Themosis
             // update the themosis theme style.css
             $this->updateThemosisThemeStyleCSS();
 
+            // update the themosis theme package.json
+            $this->updateThemosisThemePackageJSON();
+
+            // update the themosis theme composer.json
+            $this->updateThemosisThemeComposerJSON();
+
+            // update the themosis theme bower.json
+            $this->updateThemosisThemeBowerJSON();
+
             // install themosis theme node packages
             $this->installThemosisThemeNodePackages();
 
@@ -704,6 +713,86 @@ class Themosis
             file_put_contents($styleCSS, $style, LOCK_EX);
 
             $io->write('Updated the themosis theme style.css.');
+        }
+    }
+
+    /**
+     * update the information in the themosis theme package.json
+     *
+     * @return void
+     */
+    private function updateThemosisThemePackageJSON()
+    {
+        $config = $this->getConfig();
+        $io     = $this->getIO();
+
+        // load the package.json file
+        $packageJSON = $this->retrieveThemosisThemePath('package.json');
+
+        if (file_exists($packageJSON)) {
+            $json = file_get_contents($packageJSON);
+
+            // inject the json variables
+            $json = str_replace("mvpdesign-themosis-theme", $config->getSiteSlug(), $json);
+            $json = str_replace("The Themosis framework theme.", $config->getSiteDescription(), $json);
+
+            // update the themosis package.json
+            file_put_contents($packageJSON, $json, LOCK_EX);
+
+            $io->write('Updated the themosis theme package.json.');
+        }
+    }
+
+    /**
+     * update the information in the themosis theme composer.json
+     *
+     * @return void
+     */
+    private function updateThemosisThemeComposerJSON()
+    {
+        $config = $this->getConfig();
+        $io     = $this->getIO();
+
+        // load the composer.json file
+        $composerJSON = $this->retrieveThemosisThemePath('composer.json');
+
+        if (file_exists($composerJSON)) {
+            $json = file_get_contents($composerJSON);
+
+            // inject the json variables
+            $json = str_replace("mvpdesign/themosis-theme", $config->getSiteSlug(), $json);
+            $json = str_replace("The Themosis framework theme.", $config->getSiteDescription(), $json);
+
+            // update the themosis composer.json
+            file_put_contents($composerJSON, $json, LOCK_EX);
+
+            $io->write('Updated the themosis theme composer.json.');
+        }
+    }
+
+    /**
+     * update the information in the themosis theme boswer.json
+     *
+     * @return void
+     */
+    private function updateThemosisThemeBowerJSON()
+    {
+        $config = $this->getConfig();
+        $io     = $this->getIO();
+
+        // load the bower.json file
+        $bowerJSON = $this->retrieveThemosisThemePath('bower.json');
+
+        if (file_exists($bowerJSON)) {
+            $json = file_get_contents($bowerJSON);
+
+            // inject the json variables
+            $json = str_replace("mvpdesign/themosis-theme", $config->getSiteSlug(), $json);
+
+            // update the themosis bower.json
+            file_put_contents($bowerJSON, $json, LOCK_EX);
+
+            $io->write('Updated the themosis theme bower.json.');
         }
     }
 
