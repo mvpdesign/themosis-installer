@@ -766,7 +766,7 @@ class Themosis
         $command .= ' && rm -R codeception';
         
         
-        $this->runProcess($command, 'Installed Codeception.', false, true);
+        $this->runProcess($command, 'Migrated Codeception.', false, true);
 
         $this->updateCodeceptionConfig();
 
