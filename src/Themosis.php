@@ -783,7 +783,7 @@ class Themosis
     {
         $environment = 'local';
 
-        $config = new CodeceptionConfig($this);
+        $config = new CodeceptionConfig();
 
         $config->updateWith($environment);
     }
@@ -847,7 +847,7 @@ class Themosis
      *
      * @return void
      */
-    public function retrieveThemosisThemePath($path = '')
+    private function retrieveThemosisThemePath($path = '')
     {
         // retrieve the theme path
         $themePathCommand  = $this->getBinDirectory() . 'wp theme path ' . $this->getTheme();

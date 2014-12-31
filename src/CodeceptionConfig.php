@@ -17,7 +17,6 @@ class CodeceptionConfig
      */
 	private $environment;
 
-	private $ThemosisInstaller;
     /**
      * The directory of this classes location
      *
@@ -350,10 +349,6 @@ class CodeceptionConfig
 		return trim(preg_replace('/\w+:/', ' ', $currentLineOfYmlFile));
 	}
 	
-	public function __construct($ThemosisInstaller)
-	{
-		$this->ThemosisInstaller = $ThemosisInstaller;
-	}
 	/**
 	 * Executes the class functions
 	 *
