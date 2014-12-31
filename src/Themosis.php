@@ -271,7 +271,7 @@ class Themosis
                 $this->isGeneratingWordPressSalts() ? 'y' : 'n'
             );
 
-            $installingWordpress = $io->askAndValidate(
+            $installingWordPress = $io->askAndValidate(
                 Helper::formatQuestion('Install WordPress', $this->isInstallingWordPress() ? 'y' : 'n'),
                 "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
                 false,
@@ -295,11 +295,11 @@ class Themosis
             $config->setSiteUrl($siteUrl);
 
             $this->setGeneratingWordPressSalts($generatingWordPressSalts == 'y' ? true : false);
-            $this->setInstallingWordpress($installingWordpress == 'y' ? true : false);
+            $this->setInstallingWordPress($installingWordPress == 'y' ? true : false);
             $this->setConfiguringThemosisTheme($configuringThemosisTheme == 'y' ? true : false);
 
             // extra questions if installing wordpress
-            if ($installingWordpress == 'y') {
+            if ($installingWordPress == 'y') {
                 $siteTitle = $io->askAndValidate(
                     Helper::formatQuestion('Site Title', $config->getSiteTitle()),
                     "MVPDesign\ThemosisInstaller\Helper::validateString",
@@ -372,9 +372,9 @@ class Themosis
         $this->updateEnvironmentHostname();
 
         // install wordpress
-        if ($this->isInstallingWordpress()) {
+        if ($this->isInstallingWordPress()) {
             // install the wordpress database
-            $this->installWordpress();
+            $this->installWordPress();
 
             // remove the hello world comment
             $this->removeHelloWorldComment();
@@ -397,9 +397,6 @@ class Themosis
 
         // configure themosis theme
         if ($this->isConfiguringThemosisTheme()) {
-            // activate the wordpress theme
-            $this->activateWordPressTheme();
-
             // set the home template
             $this->setHomeTemplate();
 
@@ -408,6 +405,15 @@ class Themosis
 
             // update the themosis theme style.css
             $this->updateThemosisThemeStyleCSS();
+
+            // update the themosis theme package.json
+            $this->updateThemosisThemePackageJSON();
+
+            // update the themosis theme composer.json
+            $this->updateThemosisThemeComposerJSON();
+
+            // update the themosis theme bower.json
+            $this->updateThemosisThemeBowerJSON();
 
             // install themosis theme node packages
             $this->installThemosisThemeNodePackages();
@@ -421,8 +427,14 @@ class Themosis
             // deploy themosis theme assets
             $this->deployThemosisThemeAssets();
 
+            // initiates all testing suites
             $this->initiateTestingSuites();
 
+            // rename the themosis theme directory
+            $this->renameThemosisThemeDirectory();
+
+            // activate the wordpress theme
+            $this->activateWordPressTheme();
         }
 
         $io->write('Themosis installation complete.');
@@ -521,11 +533,11 @@ class Themosis
         $adminEmail    = Helper::validateEmail($config->getAdminEmail());
 
         $command  = $this->getBinDirectory() . 'wp core install';
-        $command .= ' --url=' . $siteUrl;
-        $command .= ' --title=' . $siteTitle;
-        $command .= ' --admin_user=' . $adminUser;
-        $command .= ' --admin_password=' . $adminPassword;
-        $command .= ' --admin_email=' . $adminEmail;
+        $command .= ' --url="' . $siteUrl . '"';
+        $command .= ' --title="' . $siteTitle . '"';
+        $command .= ' --admin_user="' . $adminUser . '"';
+        $command .= ' --admin_password="' . $adminPassword . '"';
+        $command .= ' --admin_email="' . $adminEmail . '"';
 
         $this->runProcess($command, 'WordPress installed successfully.');
     }
@@ -585,13 +597,14 @@ class Themosis
      */
     private function changeAdminUserID()
     {
+        $config     = $this->getConfig();
         $oldAdminID = 1;
         $newAdminID = 2;
 
         $command  = $this->getBinDirectory() . 'wp db query "';
-        $command .= 'UPDATE wp_users SET ID=' . $newAdminID . ' WHERE ID=' . $oldAdminID . '; ';
-        $command .= 'UPDATE wp_usermeta SET user_id=' . $newAdminID . ' WHERE user_id=' . $oldAdminID . '; ';
-        $command .= 'UPDATE wp_posts SET post_author=' . $newAdminID . ' WHERE post_author=' . $oldAdminID . '"';
+        $command .= 'UPDATE ' . $config->getDbPrefix() . 'users SET ID=' . $newAdminID . ' WHERE ID=' . $oldAdminID . '; ';
+        $command .= 'UPDATE ' . $config->getDbPrefix() . 'usermeta SET user_id=' . $newAdminID . ' WHERE user_id=' . $oldAdminID . '; ';
+        $command .= 'UPDATE ' . $config->getDbPrefix() . 'posts SET post_author=' . $newAdminID . ' WHERE post_author=' . $oldAdminID . '"';
 
         $this->runProcess($command, 'Changed admin user ID.', false, true);
     }
@@ -634,18 +647,6 @@ class Themosis
         $command .= ' --tag-base=' . $tagBase;
 
         $this->runProcess($command, 'Updated the WordPress rewrite structure.', false, true);
-    }
-
-    /**
-     * activate the wordpress theme
-     *
-     * @return void
-     */
-    private function activateWordPressTheme()
-    {
-        $command = $this->getBinDirectory() . 'wp theme activate ' . $this->getTheme();
-
-        $this->runProcess($command, "Activated the '" . ucfirst($this->getTheme()) . "' WordPress theme.", false, true);
     }
 
     /**
@@ -711,6 +712,86 @@ class Themosis
     }
 
     /**
+     * update the information in the themosis theme package.json
+     *
+     * @return void
+     */
+    private function updateThemosisThemePackageJSON()
+    {
+        $config = $this->getConfig();
+        $io     = $this->getIO();
+
+        // load the package.json file
+        $packageJSON = $this->retrieveThemosisThemePath('package.json');
+
+        if (file_exists($packageJSON)) {
+            $json = file_get_contents($packageJSON);
+
+            // inject the json variables
+            $json = str_replace("mvpdesign-themosis-theme", $config->getSiteSlug(), $json);
+            $json = str_replace("The Themosis framework theme.", $config->getSiteDescription(), $json);
+
+            // update the themosis package.json
+            file_put_contents($packageJSON, $json, LOCK_EX);
+
+            $io->write('Updated the themosis theme package.json.');
+        }
+    }
+
+    /**
+     * update the information in the themosis theme composer.json
+     *
+     * @return void
+     */
+    private function updateThemosisThemeComposerJSON()
+    {
+        $config = $this->getConfig();
+        $io     = $this->getIO();
+
+        // load the composer.json file
+        $composerJSON = $this->retrieveThemosisThemePath('composer.json');
+
+        if (file_exists($composerJSON)) {
+            $json = file_get_contents($composerJSON);
+
+            // inject the json variables
+            $json = str_replace("mvpdesign/themosis-theme", $config->getSiteSlug(), $json);
+            $json = str_replace("The Themosis framework theme.", $config->getSiteDescription(), $json);
+
+            // update the themosis composer.json
+            file_put_contents($composerJSON, $json, LOCK_EX);
+
+            $io->write('Updated the themosis theme composer.json.');
+        }
+    }
+
+    /**
+     * update the information in the themosis theme boswer.json
+     *
+     * @return void
+     */
+    private function updateThemosisThemeBowerJSON()
+    {
+        $config = $this->getConfig();
+        $io     = $this->getIO();
+
+        // load the bower.json file
+        $bowerJSON = $this->retrieveThemosisThemePath('bower.json');
+
+        if (file_exists($bowerJSON)) {
+            $json = file_get_contents($bowerJSON);
+
+            // inject the json variables
+            $json = str_replace("mvpdesign/themosis-theme", $config->getSiteSlug(), $json);
+
+            // update the themosis bower.json
+            file_put_contents($bowerJSON, $json, LOCK_EX);
+
+            $io->write('Updated the themosis theme bower.json.');
+        }
+    }
+
+    /**
      * install themosis theme node packages
      *
      * @return void
@@ -732,87 +813,6 @@ class Themosis
         $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && composer install';
 
         $this->runProcess($command, 'Installed composer dependencies.', false, true);
-    }
-
-    /**
-     * initiates all testing suites
-     *
-     * @return void
-     */
-    private function initiateTestingSuites()
-    {
-        $this->initiateCodeception();
-
-        $this->initiatePhpSpec();
-
-        $this->initiateBehat();
-
-    }
-
-    /**
-     * initiates codeception and builds an example test
-     *
-     * @return void
-     */
-    private function initiateCodeception()
-    {
-        //The parts that make up this command
-
-        //'vendor/bin/codecept bootstrap'
-        //'cp codeception-config.yml codeception.yml'
-        //'cp -r tests codeception'
-        //'rm -R tests'
-        //'mkdir tests'
-        //'cp -r codeception tests/codeception'
-        //'rm -R codeception'
-        //'vendor/bin/codecept generate:cept acceptance Home'
- 
-        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && vendor/bin/codecept bootstrap && cp codeception-config.yml codeception.yml && cp -r tests codeception && rm -R tests && mkdir tests && cp -r codeception tests/codeception && rm -R codeception && vendor/bin/codecept generate:cept acceptance Home'
-        
-        $this->runProcess($command, 'Initiated PhpSpec.', false, true);
-
-        $this->updateCodeceptionConfig();
-
-    }
-    /**
-     * Runs the codeception config updater.
-     *
-     * @return void
-     */
-    private function updateCodeceptionConfig()
-    {
-        $environment = 'local';
-
-        $config = new CodeceptionConfig;
-
-        $config->updateWith($environment);
-    }
-
-    /**
-     * initiates phpspec and builds an example function
-     *
-     * @return void
-     */
-    private function initiatePhpSpec()
-    {
-        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && vendor/bin/phpspec desc MVPDesign/ThemosisTheme/controllers/HomeController';
-
-        $this->runProcess($command , 'Initiated PhpSpec.', false, true);
-
-    }
-
-    /**
-     * initiates behat
-     *
-     * @return void
-     */
-    private function initiateBehat()
-    {
-
-        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && mkdir tests/features';
-
-        $this->runProcess($command , 'Initiated PhpSpec.', false, true);
-
     }
 
     /**
@@ -841,7 +841,115 @@ class Themosis
         $this->runProcess($command, 'Deployed themosis theme assets.', false, true);
     }
 
-    
+    /**
+     * initiates all testing suites
+     *
+     * @return void
+     */
+    private function initiateTestingSuites()
+    {
+        // initiates codeception and builds an example test
+        $this->initiateCodeception();
+
+        // initiates phpspec and builds an example function
+        $this->initiatePhpSpec();
+
+        // initiates behat
+        $this->initiateBehat();
+    }
+
+    /**
+     * initiates codeception and builds an example test
+     *
+     * @return void
+     */
+    private function initiateCodeception()
+    {
+        //The parts that make up this command
+
+        //'vendor/bin/codecept bootstrap'
+        //'cp codeception-config.yml codeception.yml'
+        //'cp -r tests codeception'
+        //'rm -R tests'
+        //'mkdir tests'
+        //'cp -r codeception tests/codeception'
+        //'rm -R codeception'
+        //'vendor/bin/codecept generate:cept acceptance Home'
+
+        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && vendor/bin/codecept bootstrap && cp codeception-config.yml codeception.yml && cp -r tests codeception && rm -R tests && mkdir tests && cp -r codeception tests/codeception && rm -R codeception && vendor/bin/codecept generate:cept acceptance Home';
+
+        $this->runProcess($command, 'Initiated Codeception.', false, true);
+
+        $this->updateCodeceptionConfig();
+
+    }
+    /**
+     * Runs the codeception config updater.
+     *
+     * @return void
+     */
+    private function updateCodeceptionConfig()
+    {
+        $environment = 'local';
+
+        $config = new CodeceptionConfig;
+
+        $config->updateWith($environment);
+    }
+
+    /**
+     * initiates phpspec and builds an example function
+     *
+     * @return void
+     */
+    private function initiatePhpSpec()
+    {
+        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && vendor/bin/phpspec desc MVPDesign/ThemosisTheme/controllers/HomeController';
+
+        $this->runProcess($command, 'Initiated PhpSpec.', false, true);
+    }
+
+    /**
+     * initiates behat
+     *
+     * @return void
+     */
+    private function initiateBehat()
+    {
+        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && mkdir tests/features';
+
+        $this->runProcess($command, 'Initiated Behat.', false, true);
+    }
+
+
+    /**
+     * rename themosis theme directory
+     *
+     * @return void
+     */
+    private function renameThemosisThemeDirectory()
+    {
+        $config = $this->getConfig();
+
+        $command = 'mv ' . $this->retrieveThemosisThemePath() . ' ' . $this->retrieveThemosisThemePath('../' . $config->getSiteSlug());
+
+        $this->runProcess($command, 'Renamed themosis theme directory.', false, true);
+    }
+
+    /**
+     * activate the wordpress theme
+     *
+     * @return void
+     */
+    private function activateWordPressTheme()
+    {
+        $config = $this->getConfig();
+
+        $command = $this->getBinDirectory() . 'wp theme activate ' . $config->getSiteSlug();
+
+        $this->runProcess($command, "Activated the '" . ucfirst($config->getSiteSlug()) . "' WordPress theme.", false, true);
+    }
+
     /**
      * retrieve the theme path
      *

@@ -310,6 +310,16 @@ class Config
     }
 
     /**
+     * get the site slug
+     *
+     * @return string
+     */
+    public function getSiteSlug()
+    {
+        return str_replace(' ', '-', strtolower($this->siteTitle));
+    }
+
+    /**
      * is the site public
      *
      * @return bool

@@ -220,6 +220,20 @@ class ConfigSpec extends ObjectBehavior
     }
 
     /**
+     * it should return a site slug
+     *
+     * @return void
+     */
+    public function it_should_return_a_site_slug()
+    {
+        $siteTitle = 'a String';
+        $siteSlug = 'a-string';
+
+        $this->setSiteTitle($siteTitle);
+        $this->getSiteSlug()->shouldReturn($siteSlug);
+    }
+
+    /**
      * it should return a site description
      *
      * @return void
