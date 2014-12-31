@@ -1,8 +1,8 @@
-themosis-installer
+Themosis Installer
 ==================
 
-Themosis Installer
+```
+composer create-project mvpdesign/themosis=dev-master <directory>
+```
 
-To Run:
-
-Use Terminal: composer create-project mvpdesign/themosis=dev-master
+Themosis Installer is a tool that will generate the Themosis environment, install & configure WordPress and activate & configure the Themosis theme.
