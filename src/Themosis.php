@@ -271,7 +271,7 @@ class Themosis
                 $this->isGeneratingWordPressSalts() ? 'y' : 'n'
             );
 
-            $installingWordPress = $io->askAndValidate(
+            $installingWordpress = $io->askAndValidate(
                 Helper::formatQuestion('Install WordPress', $this->isInstallingWordPress() ? 'y' : 'n'),
                 "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
                 false,
@@ -865,22 +865,23 @@ class Themosis
      */
     private function initiateCodeception()
     {
-        //The parts that make up this command
-
-        //'vendor/bin/codecept bootstrap'
-        //'cp codeception-config.yml codeception.yml'
-        //'cp -r tests codeception'
-        //'rm -R tests'
-        //'mkdir tests'
-        //'cp -r codeception tests/codeception'
-        //'rm -R codeception'
-        //'vendor/bin/codecept generate:cept acceptance Home'
+    
+        $command  = 'cd ' . $this->retrieveThemosisThemePath();
+        $command .= ' && vendor/bin/codecept bootstrap';
+        $command .= ' && cp codeception-init.yml codeception.yml';
+        $command .= ' && cp -r tests codeception';
+        $command .= ' && rm -R tests && mkdir tests';
+        $command .= ' && cp -r codeception tests/codeception';
+        $command .= ' && rm -R codeception';
+        
+        
+        $this->runProcess($command, 'Migrated Codeception.', false, true);
 
         $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && vendor/bin/codecept bootstrap && cp codeception-config.yml codeception.yml && cp -r tests codeception && rm -R tests && mkdir tests && cp -r codeception tests/codeception && rm -R codeception && vendor/bin/codecept generate:cept acceptance Home';
 
-        $this->runProcess($command, 'Initiated Codeception.', false, true);
+        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && vendor/bin/codecept generate:cept acceptance Home';
 
-        //$this->updateCodeceptionConfig();
+        $this->runProcess($command, 'Initiated Codeception.', false, true);
 
     }
     /**
@@ -892,7 +893,7 @@ class Themosis
     {
         $environment = 'local';
 
-        $config = new CodeceptionConfig;
+        $config = new CodeceptionConfig();
 
         $config->updateWith($environment);
     }
@@ -918,7 +919,8 @@ class Themosis
     {
         $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && mkdir tests/features';
 
-        $this->runProcess($command, 'Initiated Behat.', false, true);
+        $this->runProcess($command , 'Initiated Behat.', false, true);
+
     }
 
 

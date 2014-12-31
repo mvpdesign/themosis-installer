@@ -44,6 +44,7 @@ class CodeceptionConfig
      */
 	private $environmentFilePath;
 
+	private $baseDirectory;
     /**
      * The path to the codeception global config .yml file
      *
@@ -369,7 +370,7 @@ class CodeceptionConfig
 
 		$this->setSiteUrlFrom($this->getEnvironmentArray());
 
-        $this->findCodeceptionConfigFile($this->getWorkingDirectory());
+        $this->findCodeceptionConfigFile();
 
         $CodeceptionYmlFile = $this->convertCodeceptionYmlToArray();
 
@@ -455,8 +456,9 @@ class CodeceptionConfig
 
 			if ( $this->isInDirectory($targetFile) )
 			{
+				$this->setBaseDirectory($current_directory);
 
-				 return $this->setEnvironmentFilePath($current_directory . '/' . $targetFile);
+				return $this->setEnvironmentFilePath($current_directory . '/' . $targetFile);
 
 			}
 
@@ -464,6 +466,10 @@ class CodeceptionConfig
 		}
 	}
 
+	private function setBaseDirectory($current_directory)
+	{
+		$this->baseDirectory = $current_directory;
+	}
 	/**
 	 * Checks if the target file is found in the current directory
 	 *
@@ -500,29 +506,26 @@ class CodeceptionConfig
 	/**
 	 * Iterates through project files to find the codeception global config file. Returns the path to that file
      *
-	 * @param string $current_directory
 	 *
 	 * @return string $this->codeceptionConfigPath
 	 */
-	private function findCodeceptionConfigFile($current_directory)
+	private function findCodeceptionConfigFile()
 	{
+
+		$baseDirectory = $this->baseDirectory;
 
 		$targetFile = "codeception.yml";
 
-		while( $this->isValidDirectory($current_directory) )
+		$currentDirectory = $baseDirectory . "/public/wp-content/themes/themosis";
+
+		$this->setFilesInCurrentDirectory($currentDirectory);
+
+		if ( $this->isInDirectory($targetFile) )
 		{
 
-			$files_in_current_directory = $this->setFilesInCurrentDirectory($current_directory);
+			$this->setProjectRootDirectory($currentDirectory);
 
-			if ( $this->isInDirectory($targetFile) )
-			{
-
-				$this->setProjectRootDirectory($current_directory);
-
-				return $this->setCodeceptionConfigPath($current_directory . '/' . $targetFile);
-			}
-
-			return $this->findCodeceptionConfigFile(dirname($current_directory));
+			return $this->setCodeceptionConfigPath($currentDirectory . '/' . $targetFile);
 		}
 
 	}	
