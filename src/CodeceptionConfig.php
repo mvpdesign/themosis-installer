@@ -370,7 +370,7 @@ class CodeceptionConfig
 
 		$this->setSiteUrlFrom($this->getEnvironmentArray());
 
-        $this->findCodeceptionConfigFile($this->getWorkingDirectory());
+        $this->findCodeceptionConfigFile();
 
         $CodeceptionYmlFile = $this->convertCodeceptionYmlToArray();
 
@@ -506,27 +506,26 @@ class CodeceptionConfig
 	/**
 	 * Iterates through project files to find the codeception global config file. Returns the path to that file
      *
-	 * @param string $current_directory
 	 *
 	 * @return string $this->codeceptionConfigPath
 	 */
-	private function findCodeceptionConfigFile($current_directory)
+	private function findCodeceptionConfigFile()
 	{
 
 		$baseDirectory = $this->baseDirectory;
 
 		$targetFile = "codeception.yml";
 
-		$current_directory = $baseDirectory . "/public/wp-content/themes/themosis";
+		$currentDirectory = $baseDirectory . "/public/wp-content/themes/themosis";
 
-		$this->setFilesInCurrentDirectory($current_directory);
+		$this->setFilesInCurrentDirectory($currentDirectory);
 
 		if ( $this->isInDirectory($targetFile) )
 		{
 
-			$this->setProjectRootDirectory($current_directory);
+			$this->setProjectRootDirectory($currentDirectory);
 
-			return $this->setCodeceptionConfigPath($current_directory . '/' . $targetFile);
+			return $this->setCodeceptionConfigPath($currentDirectory . '/' . $targetFile);
 		}
 
 	}	
