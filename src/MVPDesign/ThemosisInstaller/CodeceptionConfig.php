@@ -514,20 +514,16 @@ class CodeceptionConfig
 
 		$targetFile = "codeception.yml";
 
-		while( $this->isValidDirectory($current_directory) )
+		$current_directory = chdir($this->ThemosisInstaller->retrieveThemosisThemePath());
+
+		$this->setFilesInCurrentDirectory($current_directory);
+
+		if ( $this->isInDirectory($targetFile) )
 		{
 
-			$files_in_current_directory = $this->setFilesInCurrentDirectory($current_directory);
+			$this->setProjectRootDirectory($current_directory);
 
-			if ( $this->isInDirectory($targetFile) )
-			{
-
-				$this->setProjectRootDirectory($current_directory);
-
-				return $this->setCodeceptionConfigPath($current_directory . '/' . $targetFile);
-			}
-
-			return $this->findCodeceptionConfigFile(dirname($current_directory));
+			return $this->setCodeceptionConfigPath($current_directory . '/' . $targetFile);
 		}
 
 	}	
