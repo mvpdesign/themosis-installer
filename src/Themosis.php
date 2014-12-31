@@ -427,8 +427,8 @@ class Themosis
             // deploy themosis theme assets
             $this->deployThemosisThemeAssets();
 
+            // initiates all testing suites
             $this->initiateTestingSuites();
-
 
             // rename the themosis theme directory
             $this->renameThemosisThemeDirectory();
@@ -816,18 +816,46 @@ class Themosis
     }
 
     /**
+     * install themosis theme bower components
+     *
+     * @return void
+     */
+    private function installThemosisThemeBowerComponents()
+    {
+        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && bower install';
+
+        $this->runProcess($command, 'Installed bower components.', false, true);
+    }
+
+    /**
+     * deploy themosis theme assets
+     *
+     * @return void
+     */
+    private function deployThemosisThemeAssets()
+    {
+        $config = $this->getConfig();
+
+        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && gulp --silent deloy:' . $config->getEnvironment();
+
+        $this->runProcess($command, 'Deployed themosis theme assets.', false, true);
+    }
+
+    /**
      * initiates all testing suites
      *
      * @return void
      */
     private function initiateTestingSuites()
     {
+        // initiates codeception and builds an example test
         $this->initiateCodeception();
 
+        // initiates phpspec and builds an example function
         $this->initiatePhpSpec();
 
+        // initiates behat
         $this->initiateBehat();
-
     }
 
     /**
@@ -847,10 +875,10 @@ class Themosis
         //'cp -r codeception tests/codeception'
         //'rm -R codeception'
         //'vendor/bin/codecept generate:cept acceptance Home'
- 
-        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && vendor/bin/codecept bootstrap && cp codeception-config.yml codeception.yml && cp -r tests codeception && rm -R tests && mkdir tests && cp -r codeception tests/codeception && rm -R codeception && vendor/bin/codecept generate:cept acceptance Home'
-        
-        $this->runProcess($command, 'Initiated PhpSpec.', false, true);
+
+        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && vendor/bin/codecept bootstrap && cp codeception-config.yml codeception.yml && cp -r tests codeception && rm -R tests && mkdir tests && cp -r codeception tests/codeception && rm -R codeception && vendor/bin/codecept generate:cept acceptance Home';
+
+        $this->runProcess($command, 'Initiated Codeception.', false, true);
 
         $this->updateCodeceptionConfig();
 
@@ -878,8 +906,7 @@ class Themosis
     {
         $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && vendor/bin/phpspec desc MVPDesign/ThemosisTheme/controllers/HomeController';
 
-        $this->runProcess($command , 'Initiated PhpSpec.', false, true);
-
+        $this->runProcess($command, 'Initiated PhpSpec.', false, true);
     }
 
     /**
@@ -889,40 +916,12 @@ class Themosis
      */
     private function initiateBehat()
     {
-
         $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && mkdir tests/features';
 
-        $this->runProcess($command , 'Initiated PhpSpec.', false, true);
-
+        $this->runProcess($command, 'Initiated Behat.', false, true);
     }
 
-    /**
-     * install themosis theme bower components
-     *
-     * @return void
-     */
-    private function installThemosisThemeBowerComponents()
-    {
-        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && bower install';
 
-        $this->runProcess($command, 'Installed bower components.', false, true);
-    }
-
-    /**
-     * deploy themosis theme assets
-     *
-     * @return void
-     */
-    private function deployThemosisThemeAssets()
-    {
-        $config = $this->getConfig();
-
-        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && gulp --silent deloy:' . $config->getEnvironment();
-
-        $this->runProcess($command, 'Deployed themosis theme assets.', false, true);
-    }
-
-    
     /**
      * rename themosis theme directory
      *
