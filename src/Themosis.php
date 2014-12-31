@@ -771,7 +771,7 @@ class Themosis
         
         $this->runProcess($command, 'Initiated PhpSpec.', false, true);
 
-        $this->updateCodeceptionConfig();
+       // $this->updateCodeceptionConfig();
 
     }
     /**
