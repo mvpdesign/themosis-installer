@@ -517,7 +517,7 @@ class CodeceptionConfig
 
 		$targetFile = "codeception.yml";
 
-		$current_directory = $baseDirectory . "/public/wp-content/themes/themosis/";
+		$current_directory = $baseDirectory . "/public/wp-content/themes/themosis";
 
 		$this->setFilesInCurrentDirectory($current_directory);
 
