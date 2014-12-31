@@ -271,7 +271,7 @@ class Themosis
                 $this->isGeneratingWordPressSalts() ? 'y' : 'n'
             );
 
-            $installingWordpress = $io->askAndValidate(
+            $installingWordPress = $io->askAndValidate(
                 Helper::formatQuestion('Install WordPress', $this->isInstallingWordPress() ? 'y' : 'n'),
                 "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
                 false,
@@ -893,7 +893,7 @@ class Themosis
     {
         $environment = 'local';
 
-        $config = new CodeceptionConfig();
+        $config = new CodeceptionConfig;
 
         $config->updateWith($environment);
     }
