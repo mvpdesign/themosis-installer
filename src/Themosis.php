@@ -784,7 +784,7 @@ class Themosis
     {
         $environment = 'local';
 
-        $config = new CodeceptionConfig();
+        $config = new CodeceptionConfig;
 
         $config->updateWith($environment);
     }
