@@ -771,7 +771,7 @@ class Themosis
         
         $this->runProcess($command, 'Initiated Codeception.', false, true);
 
-       // $this->updateCodeceptionConfig();
+        $this->updateCodeceptionConfig();
 
     }
     /**
