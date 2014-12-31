@@ -44,6 +44,7 @@ class CodeceptionConfig
      */
 	private $environmentFilePath;
 
+	private $baseDirectory;
     /**
      * The path to the codeception global config .yml file
      *
@@ -455,8 +456,9 @@ class CodeceptionConfig
 
 			if ( $this->isInDirectory($targetFile) )
 			{
+				$this->setBaseDirectory($current_directory);
 
-				 return $this->setEnvironmentFilePath($current_directory . '/' . $targetFile);
+				return $this->setEnvironmentFilePath($current_directory . '/' . $targetFile);
 
 			}
 
@@ -464,6 +466,10 @@ class CodeceptionConfig
 		}
 	}
 
+	private function setBaseDirectory($current_directory)
+	{
+		$this->baseDirectory = $current_directory;
+	}
 	/**
 	 * Checks if the target file is found in the current directory
 	 *
@@ -507,9 +513,11 @@ class CodeceptionConfig
 	private function findCodeceptionConfigFile($current_directory)
 	{
 
+		$baseDirectory = $this->baseDirectory;
+
 		$targetFile = "codeception.yml";
 
-		$current_directory = chdir($this->ThemosisInstaller->retrieveThemosisThemePath());
+		$current_directory = $baseDirectory . "/public/wp-content/themes/themosis/";
 
 		$this->setFilesInCurrentDirectory($current_directory);
 
