@@ -847,7 +847,7 @@ class Themosis
      *
      * @return void
      */
-    private function retrieveThemosisThemePath($path = '')
+    public function retrieveThemosisThemePath($path = '')
     {
         // retrieve the theme path
         $themePathCommand  = $this->getBinDirectory() . 'wp theme path ' . $this->getTheme();
