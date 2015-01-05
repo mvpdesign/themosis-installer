@@ -285,6 +285,18 @@ class Themosis
                 $this->isConfiguringThemosisTheme() ? 'y' : 'n'
             );
 
+            $siteTitle = $io->askAndValidate(
+                Helper::formatQuestion('Site Title', $config->getSiteTitle()),
+                "MVPDesign\ThemosisInstaller\Helper::validateString",
+                false,
+                $config->getSiteTitle()
+            );
+
+            $siteDescription = $io->ask(
+                Helper::formatQuestion('Site Description', $config->getSiteDescription()),
+                $config->getSiteDescription()
+            );
+
             // save the answers
             $config->setEnvironment($environment);
             $config->setDbName($dbName);
@@ -293,6 +305,8 @@ class Themosis
             $config->setDbHost($dbHost);
             $config->setDbPrefix($dbPrefix);
             $config->setSiteUrl($siteUrl);
+            $config->setSiteTitle($siteTitle);
+            $config->setSiteDescription($siteDescription);
 
             $this->setGeneratingWordPressSalts($generatingWordPressSalts == 'y' ? true : false);
             $this->setInstallingWordPress($installingWordPress == 'y' ? true : false);
@@ -300,18 +314,6 @@ class Themosis
 
             // extra questions if installing wordpress
             if ($installingWordPress == 'y') {
-                $siteTitle = $io->askAndValidate(
-                    Helper::formatQuestion('Site Title', $config->getSiteTitle()),
-                    "MVPDesign\ThemosisInstaller\Helper::validateString",
-                    false,
-                    $config->getSiteTitle()
-                );
-
-                $siteDescription = $io->ask(
-                    Helper::formatQuestion('Site Description', $config->getSiteDescription()),
-                    $config->getSiteDescription()
-                );
-
                 $isSitePublic = $io->askAndValidate(
                     Helper::formatQuestion('Site visible to search engines', $config->isSitePublic() ? 'y' : 'n'),
                     "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
@@ -865,7 +867,7 @@ class Themosis
      */
     private function initiateCodeception()
     {
-    
+
         $command  = 'cd ' . $this->retrieveThemosisThemePath();
         $command .= ' && vendor/bin/codecept bootstrap';
         $command .= ' && cp codeception-init.yml codeception.yml';
@@ -873,8 +875,8 @@ class Themosis
         $command .= ' && rm -R tests && mkdir tests';
         $command .= ' && cp -r codeception tests/codeception';
         $command .= ' && rm -R codeception';
-        
-        
+
+
         $this->runProcess($command, 'Migrated Codeception.', false, true);
         $this->updateCodeceptionConfig();
         $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && vendor/bin/codecept generate:cept acceptance Home';
