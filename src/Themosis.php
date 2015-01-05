@@ -8,7 +8,6 @@ use Composer\Composer;
 use Symfony\Component\Process\Process;
 use MVPDesign\ThemosisInstaller\Config;
 use MVPDesign\ThemosisInstaller\Helper;
-use MVPDesign\ThemosisInstaller\CodeceptionConfig;
 
 class Themosis
 {
@@ -417,6 +416,12 @@ class Themosis
             // update the themosis theme bower.json
             $this->updateThemosisThemeBowerJSON();
 
+            // update the acceptance testing yml
+            $this->updateAcceptanceTestingYml();
+
+            // update the codeception yml
+            $this->updateCodeceptionYml();
+
             // install themosis theme node packages
             $this->installThemosisThemeNodePackages();
 
@@ -428,9 +433,6 @@ class Themosis
 
             // deploy themosis theme assets
             $this->deployThemosisThemeAssets();
-
-            // initiates all testing suites
-            $this->initiateTestingSuites();
 
             // rename the themosis theme directory
             $this->renameThemosisThemeDirectory();
@@ -794,6 +796,60 @@ class Themosis
     }
 
     /**
+     * update the information in the themosis theme tests/acceptance.suite.yml
+     *
+     * @return void
+     */
+    private function updateAcceptanceTestingYml()
+    {
+        $config = $this->getConfig();
+        $io     = $this->getIO();
+
+        // load the tests/acceptance.suite.yml file
+        $acceptanceYml = $this->retrieveThemosisThemePath('tests/acceptance.suite.yml');
+
+        if (file_exists($acceptanceYml)) {
+            $yml = file_get_contents($acceptanceYml);
+
+            // inject the yml variables
+            $yml = str_replace("url: 'http://localhost'", "url: '" . $config->getSiteUrl() . "'", $yml);
+
+            // update the themosis tests/acceptance.suite.yml
+            file_put_contents($acceptanceYml, $yml, LOCK_EX);
+
+            $io->write('Updated the themosis theme tests/acceptance.suite.yml.');
+        }
+    }
+
+    /**
+     * update the information in the themosis theme codeception.yml
+     *
+     * @return void
+     */
+    private function updateCodeceptionYml()
+    {
+        $config = $this->getConfig();
+        $io     = $this->getIO();
+
+        // load the codeception.yml file
+        $codeceptionYml = $this->retrieveThemosisThemePath('codeception.yml');
+
+        if (file_exists($codeceptionYml)) {
+            $yml = file_get_contents($codeceptionYml);
+
+            // inject the yml variables
+            $yml = str_replace("dsn: ''", "dsn: 'mysql:host=" . $config->getDbHost() . ";dbname=" . $config->getDbName() . "_test'", $yml);
+            $yml = str_replace("user: ''", "user: '" . $config->getDbUser() . "'", $yml);
+            $yml = str_replace("password: ''", "password: '" . $config->getDbPassword() . "'", $yml);
+
+            // update the themosis codeception.yml
+            file_put_contents($codeceptionYml, $yml, LOCK_EX);
+
+            $io->write('Updated the themosis theme codeception.yml.');
+        }
+    }
+
+    /**
      * install themosis theme node packages
      *
      * @return void
@@ -844,45 +900,6 @@ class Themosis
     }
 
     /**
-     * initiates all testing suites
-     *
-     * @return void
-     */
-    private function initiateTestingSuites()
-    {
-        // initiates codeception and builds an example test
-        $this->initiateCodeception();
-
-        // initiates phpspec and builds an example function
-        $this->initiatePhpSpec();
-
-        // initiates behat
-        $this->initiateBehat();
-    }
-
-    /**
-     * initiates codeception and builds an example test
-     *
-     * @return void
-     */
-    private function initiateCodeception()
-    {
-
-        $command  = 'cd ' . $this->retrieveThemosisThemePath();
-        $command .= ' && vendor/bin/codecept bootstrap';
-        $command .= ' && cp codeception-init.yml codeception.yml';
-        $command .= ' && cp -r tests codeception';
-        $command .= ' && rm -R tests && mkdir tests';
-        $command .= ' && cp -r codeception tests/codeception';
-        $command .= ' && rm -R codeception';
-
-
-        $this->runProcess($command, 'Migrated Codeception.', false, true);
-        $this->updateCodeceptionConfig();
-        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && vendor/bin/codecept generate:cept acceptance Home';
-        $this->runProcess($command, 'Initiated Codeception.', false, true);
-    }
-    /**
      * Runs the codeception config updater.
      *
      * @return void
@@ -893,27 +910,6 @@ class Themosis
         $config = new CodeceptionConfig;
         $config->updateWith($environment);
     }
-    /**
-     * initiates phpspec and builds an example function
-     *
-     * @return void
-     */
-    private function initiatePhpSpec()
-    {
-        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && vendor/bin/phpspec desc MVPDesign/ThemosisTheme/controllers/HomeController';
-        $this->runProcess($command, 'Initiated PhpSpec.', false, true);
-    }
-    /**
-     * initiates behat
-     *
-     * @return void
-     */
-    private function initiateBehat()
-    {
-        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && mkdir tests/features';
-        $this->runProcess($command , 'Initiated Behat.', false, true);
-    }
-
 
     /**
      * rename themosis theme directory
