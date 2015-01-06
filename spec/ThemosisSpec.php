@@ -28,6 +28,8 @@ class ThemosisSpec extends ObjectBehavior
               ->andReturn($io);
         $event->shouldReceive('getComposer')
               ->andReturn($composer);
+        $event->shouldReceive('getArguments')
+              ->andReturn(array('key=value'));
 
         $this->beConstructedWith($event);
     }
@@ -70,6 +72,27 @@ class ThemosisSpec extends ObjectBehavior
     public function it_should_return_the_config()
     {
         $this->getConfig()->shouldReturnAnInstanceOf('\MVPDesign\ThemosisInstaller\Config');
+    }
+
+    /**
+     * it should return the options
+     *
+     * @return void
+     */
+    public function it_should_return_the_options()
+    {
+        $this->getOptions()->shouldReturn(array('key' => 'value'));
+    }
+
+    /**
+     * it should return an option
+     *
+     * @return void
+     */
+    public function it_should_return_an_option()
+    {
+        $this->getOption('key')->shouldReturn('value');
+        $this->getOption('value')->shouldReturn(false);
     }
 
     /**
