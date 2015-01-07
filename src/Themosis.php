@@ -7,7 +7,12 @@ use Composer\IO\IOInterface;
 use Composer\Composer;
 use Symfony\Component\Process\Process;
 use MVPDesign\ThemosisInstaller\Config;
+use MVPDesign\ThemosisInstaller\InvalidEnvironmentException;
 use MVPDesign\ThemosisInstaller\Helper;
+use MVPDesign\ThemosisInstaller\InvalidStringLengthException;
+use MVPDesign\ThemosisInstaller\InvalidEmailException;
+use MVPDesign\ThemosisInstaller\InvalidURLException;
+use MVPDesign\ThemosisInstaller\InvalidConfirmationException;
 
 class Themosis
 {
@@ -54,6 +59,13 @@ class Themosis
     private $generatingWordPressSalts = true;
 
     /**
+     * configuring themosis
+     *
+     * @var bool
+     */
+    private $configuringThemosis = true;
+
+    /**
      * installing wordpress
      *
      * @var bool
@@ -93,6 +105,43 @@ class Themosis
     public function getComposer()
     {
         return $this->event->getComposer();
+    }
+
+    /**
+     * get options
+     *
+     * @return array
+     */
+    public function getOptions()
+    {
+        $arguments = $this->event->getArguments();
+        $options   = array();
+
+        foreach ($arguments as $argument) {
+            list($key, $value) = explode('=', $argument);
+
+            $options[$key] = $value;
+        }
+
+        return $options;
+    }
+
+    /**
+     * get a option
+     *
+     * @param  string $key
+     * @return string
+     */
+    public function getOption($key)
+    {
+        $options = $this->getOptions();
+        $value   = false;
+
+        if (array_key_exists($key, $options)) {
+            $value = $options[$key];
+        }
+
+        return $value;
     }
 
     /**
@@ -161,6 +210,27 @@ class Themosis
     }
 
     /**
+     * is configuring themosis
+     *
+     * @return bool
+     */
+    public function isConfiguringThemosis()
+    {
+        return $this->configuringThemosis;
+    }
+
+    /**
+     * set configuring themosis
+     *
+     * @param  bool $configuringThemosis
+     * @return void
+     */
+    public function setConfiguringThemosis($configuringThemosis)
+    {
+        $this->configuringThemosis = $configuringThemosis;
+    }
+
+    /**
      * is installing wordpress
      *
      * @return bool
@@ -209,92 +279,132 @@ class Themosis
      */
     public function askConfigQuestions()
     {
-        $config = $this->getConfig();
-        $io     = $this->getIO();
+        $config  = $this->getConfig();
+        $io      = $this->getIO();
+        $options = $this->getOptions();
 
         if ($io->isInteractive()) {
-            // get answers to our questions
-            $environment = $io->askAndValidate(
-                Helper::formatQuestion('Environment', $config->getEnvironment()),
-                "MVPDesign\ThemosisInstaller\Config::validateEnvironment",
-                false,
-                $config->getEnvironment()
-            );
+            try {
+                $environment = Config::validateEnvironment($this->getOption('environment'));
+            } catch (InvalidEnvironmentException $e) {
+                // get answers to our questions
+                $environment = $io->askAndValidate(
+                    Helper::formatQuestion('Environment', $config->getEnvironment()),
+                    "MVPDesign\ThemosisInstaller\Config::validateEnvironment",
+                    false,
+                    $config->getEnvironment()
+                );
+            }
 
-            $dbName = $io->askAndValidate(
-                Helper::formatQuestion('Database name', $config->getDbName()),
-                "MVPDesign\ThemosisInstaller\Helper::validateString",
-                false,
-                $config->getDbName()
-            );
+            try {
+                $dbName = Helper::validateString($this->getOption('dbName'));
+            } catch (InvalidStringLengthException $e) {
+                $dbName = $io->askAndValidate(
+                    Helper::formatQuestion('Database name', $config->getDbName()),
+                    "MVPDesign\ThemosisInstaller\Helper::validateString",
+                    false,
+                    $config->getDbName()
+                );
+            }
 
-            $dbUser = $io->askAndValidate(
-                Helper::formatQuestion('Database user', $config->getDbUser()),
-                "MVPDesign\ThemosisInstaller\Helper::validateString",
-                false,
-                $config->getDbUser()
-            );
+            try {
+                $dbUser = Helper::validateString($this->getOption('dbUser'));
+            } catch (InvalidStringLengthException $e) {
+                $dbUser = $io->askAndValidate(
+                    Helper::formatQuestion('Database user', $config->getDbUser()),
+                    "MVPDesign\ThemosisInstaller\Helper::validateString",
+                    false,
+                    $config->getDbUser()
+                );
+            }
 
-            $dbPassword = $io->askAndValidate(
-                Helper::formatQuestion('Database passsword', $config->getDbPassword()),
-                "MVPDesign\ThemosisInstaller\Helper::validateString",
-                false,
-                $config->getDbPassword()
-            );
+            try {
+                $dbPassword = Helper::validateString($this->getOption('dbPassword'));
+            } catch (InvalidStringLengthException $e) {
+                $dbPassword = $io->askAndValidate(
+                    Helper::formatQuestion('Database passsword', $config->getDbPassword()),
+                    "MVPDesign\ThemosisInstaller\Helper::validateString",
+                    false,
+                    $config->getDbPassword()
+                );
+            }
 
-            $dbHost = $io->askAndValidate(
-                Helper::formatQuestion('Database host', $config->getDbHost()),
-                "MVPDesign\ThemosisInstaller\Helper::validateString",
-                false,
-                $config->getDbHost()
-            );
+            try {
+                $dbHost = Helper::validateString($this->getOption('dbHost'));
+            } catch (InvalidStringLengthException $e) {
+                $dbHost = $io->askAndValidate(
+                    Helper::formatQuestion('Database host', $config->getDbHost()),
+                    "MVPDesign\ThemosisInstaller\Helper::validateString",
+                    false,
+                    $config->getDbHost()
+                );
+            }
 
-            $dbPrefix = $io->askAndValidate(
-                Helper::formatQuestion('Database prefix', $config->getDbPrefix()),
-                "MVPDesign\ThemosisInstaller\Helper::validateString",
-                false,
-                $config->getDbPrefix()
-            );
+            try {
+                $dbPrefix = Helper::validateString($this->getOption('dbPrefix'));
+            } catch (InvalidStringLengthException $e) {
+                $dbPrefix = $io->askAndValidate(
+                    Helper::formatQuestion('Database prefix', $config->getDbPrefix()),
+                    "MVPDesign\ThemosisInstaller\Helper::validateString",
+                    false,
+                    $config->getDbPrefix()
+                );
+            }
 
-            $siteUrl = $io->askAndValidate(
-                Helper::formatQuestion('Site URL', $config->getSiteUrl()),
-                "MVPDesign\ThemosisInstaller\Helper::validateURL",
-                false,
-                $config->getSiteUrl()
-            );
+            try {
+                $siteUrl = Helper::validateURL($this->getOption('siteUrl'));
+            } catch (InvalidURLException $e) {
+                $siteUrl = $io->askAndValidate(
+                    Helper::formatQuestion('Site URL', $config->getSiteUrl()),
+                    "MVPDesign\ThemosisInstaller\Helper::validateURL",
+                    false,
+                    $config->getSiteUrl()
+                );
+            }
 
-            $generatingWordPressSalts = $io->askAndValidate(
-                Helper::formatQuestion('Generate WordPress Salts', $this->isGeneratingWordPressSalts() ? 'y' : 'n'),
-                "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
-                false,
-                $this->isGeneratingWordPressSalts() ? 'y' : 'n'
-            );
+            try {
+                $generatingWordPressSalts = Helper::validateConfirmation($this->getOption('generatingWordPressSalts'));
+            } catch (InvalidConfirmationException $e) {
+                $generatingWordPressSalts = $io->askAndValidate(
+                    Helper::formatQuestion('Generate WordPress Salts', $this->isGeneratingWordPressSalts() ? 'y' : 'n'),
+                    "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
+                    false,
+                    $this->isGeneratingWordPressSalts() ? 'y' : 'n'
+                );
+            }
 
-            $installingWordPress = $io->askAndValidate(
-                Helper::formatQuestion('Install WordPress', $this->isInstallingWordPress() ? 'y' : 'n'),
-                "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
-                false,
-                $this->isInstallingWordPress() ? 'y' : 'n'
-            );
+            try {
+                $configuringThemosis = Helper::validateConfirmation($this->getOption('configuringThemosis'));
+            } catch (InvalidConfirmationException $e) {
+                $configuringThemosis = $io->askAndValidate(
+                    Helper::formatQuestion('Configure Themosis', $this->isConfiguringThemosis() ? 'y' : 'n'),
+                    "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
+                    false,
+                    $this->isConfiguringThemosis() ? 'y' : 'n'
+                );
+            }
 
-            $configuringThemosisTheme = $io->askAndValidate(
-                Helper::formatQuestion('Configure Themosis Theme', $this->isConfiguringThemosisTheme() ? 'y' : 'n'),
-                "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
-                false,
-                $this->isConfiguringThemosisTheme() ? 'y' : 'n'
-            );
+            try {
+                $installingWordPress = Helper::validateConfirmation($this->getOption('installingWordPress'));
+            } catch (InvalidConfirmationException $e) {
+                $installingWordPress = $io->askAndValidate(
+                    Helper::formatQuestion('Install WordPress', $this->isInstallingWordPress() ? 'y' : 'n'),
+                    "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
+                    false,
+                    $this->isInstallingWordPress() ? 'y' : 'n'
+                );
+            }
 
-            $siteTitle = $io->askAndValidate(
-                Helper::formatQuestion('Site Title', $config->getSiteTitle()),
-                "MVPDesign\ThemosisInstaller\Helper::validateString",
-                false,
-                $config->getSiteTitle()
-            );
-
-            $siteDescription = $io->ask(
-                Helper::formatQuestion('Site Description', $config->getSiteDescription()),
-                $config->getSiteDescription()
-            );
+            try {
+                $configuringThemosisTheme = Helper::validateConfirmation($this->getOption('configuringThemosisTheme'));
+            } catch (InvalidConfirmationException $e) {
+                $configuringThemosisTheme = $io->askAndValidate(
+                    Helper::formatQuestion('Configure Themosis Theme', $this->isConfiguringThemosisTheme() ? 'y' : 'n'),
+                    "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
+                    false,
+                    $this->isConfiguringThemosisTheme() ? 'y' : 'n'
+                );
+            }
 
             // save the answers
             $config->setEnvironment($environment);
@@ -304,42 +414,83 @@ class Themosis
             $config->setDbHost($dbHost);
             $config->setDbPrefix($dbPrefix);
             $config->setSiteUrl($siteUrl);
-            $config->setSiteTitle($siteTitle);
-            $config->setSiteDescription($siteDescription);
 
             $this->setGeneratingWordPressSalts($generatingWordPressSalts == 'y' ? true : false);
+            $this->setConfiguringThemosis($configuringThemosis == 'y' ? true : false);
             $this->setInstallingWordPress($installingWordPress == 'y' ? true : false);
             $this->setConfiguringThemosisTheme($configuringThemosisTheme == 'y' ? true : false);
 
+            // extra questions if configuring themosis OR installing wordpress OR configuring themosis theme
+            if ($configuringThemosis == 'y' || $installingWordPress == 'y' || $configuringThemosisTheme == 'y') {
+                try {
+                    $siteTitle = Helper::validateString($this->getOption('siteTitle'));
+                } catch (InvalidStringLengthException $e) {
+                    $siteTitle = $io->askAndValidate(
+                        Helper::formatQuestion('Site Title', $config->getSiteTitle()),
+                        "MVPDesign\ThemosisInstaller\Helper::validateString",
+                        false,
+                        $config->getSiteTitle()
+                    );
+                }
+
+                $siteDescription = $this->getOption('siteDescription');
+                if ($siteDescription === false) {
+                    $siteDescription = $io->ask(
+                        Helper::formatQuestion('Site Description', $config->getSiteDescription()),
+                        $config->getSiteDescription()
+                    );
+                }
+
+                // save the answers
+                $config->setSiteTitle($siteTitle);
+                $config->setSiteDescription($siteDescription);
+            }
+
             // extra questions if installing wordpress
             if ($installingWordPress == 'y') {
-                $isSitePublic = $io->askAndValidate(
-                    Helper::formatQuestion('Site visible to search engines', $config->isSitePublic() ? 'y' : 'n'),
-                    "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
-                    false,
-                    $config->isSitePublic() ? 'y' : 'n'
-                );
+                try {
+                    $isSitePublic = Helper::validateConfirmation($this->getOption('isSitePublic'));
+                } catch (InvalidConfirmationException $e) {
+                    $isSitePublic = $io->askAndValidate(
+                        Helper::formatQuestion('Site visible to search engines', $config->isSitePublic() ? 'y' : 'n'),
+                        "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
+                        false,
+                        $config->isSitePublic() ? 'y' : 'n'
+                    );
+                }
 
-                $adminUser = $io->askAndValidate(
-                    Helper::formatQuestion('Admin User', $config->getAdminUser()),
-                    "MVPDesign\ThemosisInstaller\Helper::validateString",
-                    false,
-                    $config->getAdminUser()
-                );
+                try {
+                    $adminUser = Helper::validateString($this->getOption('adminUser'));
+                } catch (InvalidStringLengthException $e) {
+                    $adminUser = $io->askAndValidate(
+                        Helper::formatQuestion('Admin User', $config->getAdminUser()),
+                        "MVPDesign\ThemosisInstaller\Helper::validateString",
+                        false,
+                        $config->getAdminUser()
+                    );
+                }
 
-                $adminPassword = $io->askAndValidate(
-                    Helper::formatQuestion('Admin Password', $config->getAdminPassword()),
-                    "MVPDesign\ThemosisInstaller\Helper::validateString",
-                    false,
-                    $config->getAdminPassword()
-                );
+                try {
+                    $adminPassword = Helper::validateString($this->getOption('adminPassword'));
+                } catch (InvalidStringLengthException $e) {
+                    $adminPassword = $io->askAndValidate(
+                        Helper::formatQuestion('Admin Password', $config->getAdminPassword()),
+                        "MVPDesign\ThemosisInstaller\Helper::validateString",
+                        false,
+                        $config->getAdminPassword()
+                    );
+                }
 
-                $adminEmail = $io->askAndValidate(
-                    Helper::formatQuestion('Admin Email', $config->getAdminEmail()),
-                    "MVPDesign\ThemosisInstaller\Helper::validateEmail",
-                    false,
-                    $config->getAdminEmail()
-                );
+                try {
+                    $adminEmail = Helper::validateEmail($this->getOption('adminEmail'));
+                } catch (InvalidEmailException $e) {
+                    $adminEmail = $io->askAndValidate(
+                        Helper::formatQuestion('Admin Email', $config->getAdminEmail()),
+                        "MVPDesign\ThemosisInstaller\Helper::validateEmail",
+                        false,
+                        $config->getAdminEmail()
+                    );
+                }
 
                 // save the answers
                 $config->setSiteTitle($siteTitle);
@@ -371,6 +522,15 @@ class Themosis
 
         // update the environment hostnames
         $this->updateEnvironmentHostname();
+
+        // configure themosis
+        if ($this->isConfiguringThemosis()) {
+            // update the themosis README.md
+            $this->updateThemosisReadmeMD();
+
+            // update the themosis composer.json
+            $this->updateThemosisComposerJSON();
+        }
 
         // install wordpress
         if ($this->isInstallingWordPress()) {
@@ -518,6 +678,64 @@ class Themosis
             file_put_contents($envHostnamesFilePath, $envHostnames, LOCK_EX);
 
             $io->write('Updated the environment hostname.');
+        }
+    }
+
+    /**
+     * update the information in the themosis README.md
+     *
+     * @return void
+     */
+    private function updateThemosisReadmeMD()
+    {
+        $config = $this->getConfig();
+        $io     = $this->getIO();
+
+        // load the README.md file
+        $readmeMD = 'README.md';
+
+        if (file_exists($readmeMD)) {
+            $md  = $config->getSiteTitle() ."\n";
+            $md .= "------------------\n";
+            $md .= "\n";
+            $md .= "##About\n";
+            $md .= "WordPress v4.1\n";
+            $md .= "\n";
+            $md .= "##Deployments\n";
+            $md .= "\n";
+            $md .= "##Plugins\n";
+
+            // update the themosis README.md
+            file_put_contents($readmeMD, $md, LOCK_EX);
+
+            $io->write('Updated the themosis README.md.');
+        }
+    }
+
+    /**
+     * update the information in the themosis composer.json
+     *
+     * @return void
+     */
+    private function updateThemosisComposerJSON()
+    {
+        $config = $this->getConfig();
+        $io     = $this->getIO();
+
+        // load the composer.json file
+        $composerJSON = 'composer.json';
+
+        if (file_exists($composerJSON)) {
+            $json = file_get_contents($composerJSON);
+
+            // inject the json variables
+            $json = str_replace("mvpdesign/themosis", $config->getSiteSlug(), $json);
+            $json = str_replace("The Themosis framework. A framework for WordPress developers.", $config->getSiteDescription(), $json);
+
+            // update the themosis composer.json
+            file_put_contents($composerJSON, $json, LOCK_EX);
+
+            $io->write('Updated the themosis composer.json.');
         }
     }
 
@@ -732,7 +950,7 @@ class Themosis
             $json = file_get_contents($packageJSON);
 
             // inject the json variables
-            $json = str_replace("mvpdesign-themosis-theme", $config->getSiteSlug(), $json);
+            $json = str_replace("mvpdesign-themosis", $config->getSiteSlug(), $json);
             $json = str_replace("The Themosis framework theme.", $config->getSiteDescription(), $json);
 
             // update the themosis package.json
@@ -759,10 +977,10 @@ class Themosis
             $json = file_get_contents($composerJSON);
 
             // inject the json variables
-            $json = str_replace("mvpdesign/themosis-theme", $config->getSiteSlug(), $json);
+            $json = str_replace("mvpdesign/themosis", $config->getSiteSlug(), $json);
             $json = str_replace("The Themosis framework theme.", $config->getSiteDescription(), $json);
 
-            // update the themosis composer.json
+            // update the themosis theme composer.json
             file_put_contents($composerJSON, $json, LOCK_EX);
 
             $io->write('Updated the themosis theme composer.json.');
@@ -786,7 +1004,7 @@ class Themosis
             $json = file_get_contents($bowerJSON);
 
             // inject the json variables
-            $json = str_replace("mvpdesign/themosis-theme", $config->getSiteSlug(), $json);
+            $json = str_replace("mvpdesign/themosis", $config->getSiteSlug(), $json);
 
             // update the themosis bower.json
             file_put_contents($bowerJSON, $json, LOCK_EX);
