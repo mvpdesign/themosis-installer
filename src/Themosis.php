@@ -554,6 +554,9 @@ class Themosis
 
             // update the rewrite rules
             $this->updateRewriteRules();
+
+            // make the wordpress uploads directory writable
+            $this->makeWordPressUploadsDirectoryWritable();
         }
 
         // configure themosis theme
@@ -728,8 +731,8 @@ class Themosis
             $json = file_get_contents($composerJSON);
 
             // inject the json variables
-            $json = str_replace("mvpdesign/themosis", $config->getSiteSlug(), $json);
-            $json = str_replace("The Themosis framework. A framework for WordPress developers.", $config->getSiteDescription(), $json);
+            $json = str_replace('"name": "mvpdesign/themosis"', '"name": "' . $config->getSiteSlug() . "'", $json);
+            $json = str_replace('"description": "The Themosis framework. A framework for WordPress developers."', '"description": "' . $config->getSiteDescription() . "'", $json);
 
             // update the themosis composer.json
             file_put_contents($composerJSON, $json, LOCK_EX);
@@ -762,6 +765,7 @@ class Themosis
 
         $this->runProcess($command, 'WordPress installed successfully.');
     }
+
    /**
      * remove hello world comment
      *
@@ -868,6 +872,22 @@ class Themosis
         $command .= ' --tag-base=' . $tagBase;
 
         $this->runProcess($command, 'Updated the WordPress rewrite structure.', false, true);
+    }
+
+    /**
+     * change wordpress uploads directory permissions
+     *
+     * @return void
+     */
+    private function makeWordPressUploadsDirectoryWritable()
+    {
+        // generate the theme storage path
+        $uploadsPath = 'public/wp-content/uploads';
+
+        // make the uploads directory writable
+        $uploadsWritableCommand = 'chmod -R 777 ' . $uploadsPath;
+
+        $this->runProcess($uploadsWritableCommand, 'WordPress uploads is now writable.', false, true);
     }
 
     /**
