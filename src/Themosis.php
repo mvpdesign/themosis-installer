@@ -699,7 +699,6 @@ class Themosis
             $md .= "------------------\n";
             $md .= "\n";
             $md .= "##About\n";
-            $md .= "WordPress v4.1\n";
             $md .= "\n";
             $md .= "##Deployments\n";
             $md .= "\n";
