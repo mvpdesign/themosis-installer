@@ -554,6 +554,9 @@ class Themosis
 
             // update the rewrite rules
             $this->updateRewriteRules();
+
+            // make the wordpress uploads directory writable
+            $this->makeWordPressUploadsDirectoryWritable();
         }
 
         // configure themosis theme
@@ -869,6 +872,22 @@ class Themosis
         $command .= ' --tag-base=' . $tagBase;
 
         $this->runProcess($command, 'Updated the WordPress rewrite structure.', false, true);
+    }
+
+    /**
+     * change wordpress uploads directory permissions
+     *
+     * @return void
+     */
+    private function makeWordPressUploadsDirectoryWritable()
+    {
+        // generate the theme storage path
+        $uploadsPath = 'public/wp-content/uploads';
+
+        // make the uploads directory writable
+        $uploadsWritableCommand = 'chmod -R 777 ' . $uploadsPath;
+
+        $this->runProcess($uploadsWritableCommand, 'WordPress uploads is now writable.', false, true);
     }
 
     /**
