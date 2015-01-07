@@ -149,6 +149,29 @@ class ThemosisSpec extends ObjectBehavior
     }
 
     /**
+     * it should return is configuring themosis
+     *
+     * @return void
+     */
+    public function it_should_return_is_configuring_themosis()
+    {
+        $this->isConfiguringThemosis()->shouldReturn(true);
+    }
+
+    /**
+     * it should set configuring themosis
+     *
+     * @return void
+     */
+    public function it_should_set_configuring_themosis()
+    {
+        $isConfiguringThemosis = false;
+
+        $this->setConfiguringThemosis($isConfiguringThemosis);
+        $this->isConfiguringThemosis()->shouldReturn($isConfiguringThemosis);
+    }
+
+    /**
      * it should return is installing wordpress
      *
      * @return void

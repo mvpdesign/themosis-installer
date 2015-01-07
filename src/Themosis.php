@@ -59,6 +59,13 @@ class Themosis
     private $generatingWordPressSalts = true;
 
     /**
+     * configuring themosis
+     *
+     * @var bool
+     */
+    private $configuringThemosis = true;
+
+    /**
      * installing wordpress
      *
      * @var bool
@@ -200,6 +207,27 @@ class Themosis
     public function setGeneratingWordPressSalts($generatingWordPressSalts)
     {
         $this->generatingWordPressSalts = $generatingWordPressSalts;
+    }
+
+    /**
+     * is configuring themosis
+     *
+     * @return bool
+     */
+    public function isConfiguringThemosis()
+    {
+        return $this->configuringThemosis;
+    }
+
+    /**
+     * set configuring themosis
+     *
+     * @param  bool $configuringThemosis
+     * @return void
+     */
+    public function setConfiguringThemosis($configuringThemosis)
+    {
+        $this->configuringThemosis = $configuringThemosis;
     }
 
     /**
@@ -346,6 +374,17 @@ class Themosis
             }
 
             try {
+                $configuringThemosis = Helper::validateConfirmation($this->getOption('configuringThemosis'));
+            } catch (InvalidConfirmationException $e) {
+                $configuringThemosis = $io->askAndValidate(
+                    Helper::formatQuestion('Configure Themosis', $this->isConfiguringThemosis() ? 'y' : 'n'),
+                    "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
+                    false,
+                    $this->isConfiguringThemosis() ? 'y' : 'n'
+                );
+            }
+
+            try {
                 $installingWordPress = Helper::validateConfirmation($this->getOption('installingWordPress'));
             } catch (InvalidConfirmationException $e) {
                 $installingWordPress = $io->askAndValidate(
@@ -377,10 +416,12 @@ class Themosis
             $config->setSiteUrl($siteUrl);
 
             $this->setGeneratingWordPressSalts($generatingWordPressSalts == 'y' ? true : false);
+            $this->setConfiguringThemosis($configuringThemosis == 'y' ? true : false);
             $this->setInstallingWordPress($installingWordPress == 'y' ? true : false);
             $this->setConfiguringThemosisTheme($configuringThemosisTheme == 'y' ? true : false);
 
-            if ($installingWordPress == 'y' || $configuringThemosisTheme == 'y') {
+            // extra questions if configuring themosis OR installing wordpress OR configuring themosis theme
+            if ($configuringThemosis == 'y' || $installingWordPress == 'y' || $configuringThemosisTheme == 'y') {
                 try {
                     $siteTitle = Helper::validateString($this->getOption('siteTitle'));
                 } catch (InvalidStringLengthException $e) {
@@ -481,6 +522,15 @@ class Themosis
 
         // update the environment hostnames
         $this->updateEnvironmentHostname();
+
+        // configure themosis
+        if ($this->isConfiguringThemosis()) {
+            // update the themosis README.md
+            $this->updateThemosisReadmeMD();
+
+            // update the themosis composer.json
+            $this->updateThemosisComposerJSON();
+        }
 
         // install wordpress
         if ($this->isInstallingWordPress()) {
@@ -628,6 +678,64 @@ class Themosis
             file_put_contents($envHostnamesFilePath, $envHostnames, LOCK_EX);
 
             $io->write('Updated the environment hostname.');
+        }
+    }
+
+    /**
+     * update the information in the themosis README.md
+     *
+     * @return void
+     */
+    private function updateThemosisReadmeMD()
+    {
+        $config = $this->getConfig();
+        $io     = $this->getIO();
+
+        // load the README.md file
+        $readmeMD = 'README.md';
+
+        if (file_exists($readmeMD)) {
+            $md  = $config->getSiteTitle() ."\n";
+            $md .= "------------------\n";
+            $md .= "\n";
+            $md .= "##About\n";
+            $md .= "WordPress v4.1\n";
+            $md .= "\n";
+            $md .= "##Deployments\n";
+            $md .= "\n";
+            $md .= "##Plugins\n";
+
+            // update the themosis README.md
+            file_put_contents($readmeMD, $md, LOCK_EX);
+
+            $io->write('Updated the themosis README.md.');
+        }
+    }
+
+    /**
+     * update the information in the themosis composer.json
+     *
+     * @return void
+     */
+    private function updateThemosisComposerJSON()
+    {
+        $config = $this->getConfig();
+        $io     = $this->getIO();
+
+        // load the composer.json file
+        $composerJSON = 'composer.json';
+
+        if (file_exists($composerJSON)) {
+            $json = file_get_contents($composerJSON);
+
+            // inject the json variables
+            $json = str_replace("mvpdesign/themosis", $config->getSiteSlug(), $json);
+            $json = str_replace("The Themosis framework. A framework for WordPress developers.", $config->getSiteDescription(), $json);
+
+            // update the themosis composer.json
+            file_put_contents($composerJSON, $json, LOCK_EX);
+
+            $io->write('Updated the themosis composer.json.');
         }
     }
 
@@ -842,7 +950,7 @@ class Themosis
             $json = file_get_contents($packageJSON);
 
             // inject the json variables
-            $json = str_replace("mvpdesign-themosis-theme", $config->getSiteSlug(), $json);
+            $json = str_replace("mvpdesign-themosis", $config->getSiteSlug(), $json);
             $json = str_replace("The Themosis framework theme.", $config->getSiteDescription(), $json);
 
             // update the themosis package.json
@@ -869,10 +977,10 @@ class Themosis
             $json = file_get_contents($composerJSON);
 
             // inject the json variables
-            $json = str_replace("mvpdesign/themosis-theme", $config->getSiteSlug(), $json);
+            $json = str_replace("mvpdesign/themosis", $config->getSiteSlug(), $json);
             $json = str_replace("The Themosis framework theme.", $config->getSiteDescription(), $json);
 
-            // update the themosis composer.json
+            // update the themosis theme composer.json
             file_put_contents($composerJSON, $json, LOCK_EX);
 
             $io->write('Updated the themosis theme composer.json.');
@@ -896,7 +1004,7 @@ class Themosis
             $json = file_get_contents($bowerJSON);
 
             // inject the json variables
-            $json = str_replace("mvpdesign/themosis-theme", $config->getSiteSlug(), $json);
+            $json = str_replace("mvpdesign/themosis", $config->getSiteSlug(), $json);
 
             // update the themosis bower.json
             file_put_contents($bowerJSON, $json, LOCK_EX);
