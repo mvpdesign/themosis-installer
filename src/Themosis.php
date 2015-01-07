@@ -762,6 +762,7 @@ class Themosis
 
         $this->runProcess($command, 'WordPress installed successfully.');
     }
+
    /**
      * remove hello world comment
      *
