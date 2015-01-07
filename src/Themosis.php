@@ -80,6 +80,13 @@ class Themosis
     private $configuringThemosisTheme = true;
 
     /**
+     * installing themosis theme
+     *
+     * @var bool
+     */
+    private $installingThemosisTheme = true;
+
+    /**
      * constructor
      */
     public function __construct(Event $event)
@@ -167,6 +174,18 @@ class Themosis
     {
         return $this->theme;
     }
+
+    /**
+     * set the theme
+     *
+     * @param  string $theme
+     * @return string
+     */
+    public function setTheme($theme)
+    {
+        $this->theme = $theme;
+    }
+
 
     /**
      * get the storage path
@@ -270,6 +289,27 @@ class Themosis
     public function setConfiguringThemosisTheme($configuringThemosisTheme)
     {
         $this->configuringThemosisTheme = $configuringThemosisTheme;
+    }
+
+    /**
+     * is installing themosis theme
+     *
+     * @return bool
+     */
+    public function isInstallingThemosisTheme()
+    {
+        return $this->installingThemosisTheme;
+    }
+
+    /**
+     * set installing themosis theme
+     *
+     * @param  bool $installingThemosisTheme
+     * @return void
+     */
+    public function setInstallingThemosisTheme($installingThemosisTheme)
+    {
+        $this->installingThemosisTheme = $installingThemosisTheme;
     }
 
     /**
@@ -406,6 +446,17 @@ class Themosis
                 );
             }
 
+            try {
+                $installingThemosisTheme = Helper::validateConfirmation($this->getOption('installingThemosisTheme'));
+            } catch (InvalidConfirmationException $e) {
+                $installingThemosisTheme = $io->askAndValidate(
+                    Helper::formatQuestion('Install Themosis Theme', $this->isInstallingThemosisTheme() ? 'y' : 'n'),
+                    "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
+                    false,
+                    $this->isInstallingThemosisTheme() ? 'y' : 'n'
+                );
+            }
+
             // save the answers
             $config->setEnvironment($environment);
             $config->setDbName($dbName);
@@ -419,6 +470,7 @@ class Themosis
             $this->setConfiguringThemosis($configuringThemosis == 'y' ? true : false);
             $this->setInstallingWordPress($installingWordPress == 'y' ? true : false);
             $this->setConfiguringThemosisTheme($configuringThemosisTheme == 'y' ? true : false);
+            $this->setInstallingThemosisTheme($installingThemosisTheme == 'y' ? true : false);
 
             // extra questions if configuring themosis OR installing wordpress OR configuring themosis theme
             if ($configuringThemosis == 'y' || $installingWordPress == 'y' || $configuringThemosisTheme == 'y') {
@@ -500,6 +552,23 @@ class Themosis
                 $config->setAdminPassword($adminPassword);
                 $config->setAdminEmail($adminEmail);
             }
+
+            // extra questions if installing themosis theme
+            if ($installingThemosisTheme == 'y') {
+                try {
+                    $theme = Helper::validateString($this->getOption('theme'));
+                } catch (InvalidStringLengthException $e) {
+                    $theme = $io->askAndValidate(
+                        Helper::formatQuestion('Theme', $this->getTheme()),
+                        "MVPDesign\ThemosisInstaller\Helper::validateString",
+                        false,
+                        $this->getTheme()
+                    );
+                }
+
+                // save the answers
+                $this->setTheme($theme);
+            }
         }
     }
 
@@ -561,12 +630,6 @@ class Themosis
 
         // configure themosis theme
         if ($this->isConfiguringThemosisTheme()) {
-            // set the home template
-            $this->setHomeTemplate();
-
-            // make the themosis storage directory writable
-            $this->makeThemosisThemeStorageDirectoryWritable();
-
             // update the themosis theme style.css
             $this->updateThemosisThemeStyleCSS();
 
@@ -585,6 +648,18 @@ class Themosis
             // update the codeception yml
             $this->updateCodeceptionYml();
 
+            // rename the themosis theme directory
+            $this->renameThemosisThemeDirectory();
+        }
+
+        // install themosis theme
+        if ($this->isInstallingThemosisTheme()) {
+            // set the home template
+            $this->setHomeTemplate();
+
+            // make the themosis storage directory writable
+            $this->makeThemosisThemeStorageDirectoryWritable();
+
             // install themosis theme node packages
             $this->installThemosisThemeNodePackages();
 
@@ -596,9 +671,6 @@ class Themosis
 
             // deploy themosis theme assets
             $this->deployThemosisThemeAssets();
-
-            // rename the themosis theme directory
-            $this->renameThemosisThemeDirectory();
 
             // activate the wordpress theme
             $this->activateWordPressTheme();
@@ -891,38 +963,6 @@ class Themosis
     }
 
     /**
-     * set the home template
-     *
-     * @return void
-     */
-    private function setHomeTemplate()
-    {
-        $postID = 2;
-        $metaKey = '_themosisPageTemplate';
-        $metaValue = 'home';
-
-        $command = $this->getBinDirectory() . 'wp post meta set ' . $postID . ' ' . $metaKey . ' ' . $metaValue;
-
-        $this->runProcess($command, "Set the home page to the home themosis template.", false, true);
-    }
-
-    /**
-     * change themosis theme storage directory permissions
-     *
-     * @return void
-     */
-    private function makeThemosisThemeStorageDirectoryWritable()
-    {
-        // generate the theme storage path
-        $storagePath = $this->retrieveThemosisThemePath($this->getStoragePath());
-
-        // make the storage directory writable
-        $storageWritableCommand = 'chmod -R 777 ' . $storagePath;
-
-        $this->runProcess($storageWritableCommand, 'Themosis storage directory is now writable.', false, true);
-    }
-
-    /**
      * update the information in the themosis theme style.css
      *
      * @return void
@@ -1087,6 +1127,53 @@ class Themosis
     }
 
     /**
+     * rename themosis theme directory
+     *
+     * @return void
+     */
+    private function renameThemosisThemeDirectory()
+    {
+        $config = $this->getConfig();
+
+        $command = 'mv ' . $this->retrieveThemosisThemePath() . ' ' . $this->retrieveThemosisThemePath('../' . $config->getSiteSlug());
+        $this->setTheme($config->getSiteSlug());
+
+        $this->runProcess($command, 'Renamed themosis theme directory.', false, true);
+    }
+
+    /**
+     * set the home template
+     *
+     * @return void
+     */
+    private function setHomeTemplate()
+    {
+        $postID = 2;
+        $metaKey = '_themosisPageTemplate';
+        $metaValue = 'home';
+
+        $command = $this->getBinDirectory() . 'wp post meta set ' . $postID . ' ' . $metaKey . ' ' . $metaValue;
+
+        $this->runProcess($command, "Set the home page to the home themosis template.", false, true);
+    }
+
+    /**
+     * change themosis theme storage directory permissions
+     *
+     * @return void
+     */
+    private function makeThemosisThemeStorageDirectoryWritable()
+    {
+        // generate the theme storage path
+        $storagePath = $this->retrieveThemosisThemePath($this->getStoragePath());
+
+        // make the storage directory writable
+        $storageWritableCommand = 'chmod -R 777 ' . $storagePath;
+
+        $this->runProcess($storageWritableCommand, 'Themosis storage directory is now writable.', false, true);
+    }
+
+    /**
      * install themosis theme node packages
      *
      * @return void
@@ -1137,32 +1224,6 @@ class Themosis
     }
 
     /**
-     * Runs the codeception config updater.
-     *
-     * @return void
-     */
-    private function updateCodeceptionConfig()
-    {
-        $environment = 'local';
-        $config = new CodeceptionConfig;
-        $config->updateWith($environment);
-    }
-
-    /**
-     * rename themosis theme directory
-     *
-     * @return void
-     */
-    private function renameThemosisThemeDirectory()
-    {
-        $config = $this->getConfig();
-
-        $command = 'mv ' . $this->retrieveThemosisThemePath() . ' ' . $this->retrieveThemosisThemePath('../' . $config->getSiteSlug());
-
-        $this->runProcess($command, 'Renamed themosis theme directory.', false, true);
-    }
-
-    /**
      * activate the wordpress theme
      *
      * @return void
@@ -1171,9 +1232,9 @@ class Themosis
     {
         $config = $this->getConfig();
 
-        $command = $this->getBinDirectory() . 'wp theme activate ' . $config->getSiteSlug();
+        $command = $this->getBinDirectory() . 'wp theme activate ' . $this->getTheme();
 
-        $this->runProcess($command, "Activated the '" . ucfirst($config->getSiteSlug()) . "' WordPress theme.", false, true);
+        $this->runProcess($command, "Activated the '" . $this->getTheme() . "' WordPress theme.", false, true);
     }
 
     /**

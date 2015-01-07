@@ -106,6 +106,19 @@ class ThemosisSpec extends ObjectBehavior
     }
 
     /**
+     * it should set the theme
+     *
+     * @return void
+     */
+    public function it_should_set_the_theme()
+    {
+        $theme = 'theme';
+
+        $this->setTheme($theme);
+        $this->getTheme()->shouldReturn($theme);
+    }
+
+    /**
      * it should return the storage path
      *
      * @return void
@@ -215,6 +228,29 @@ class ThemosisSpec extends ObjectBehavior
 
         $this->setConfiguringThemosisTheme($isConfiguringThemosisTheme);
         $this->isConfiguringThemosisTheme()->shouldReturn($isConfiguringThemosisTheme);
+    }
+
+    /**
+     * it should return is installing themosis theme
+     *
+     * @return void
+     */
+    public function it_should_return_is_installing_themosis_theme()
+    {
+        $this->isInstallingThemosisTheme()->shouldReturn(true);
+    }
+
+    /**
+     * it should set installing themosis theme
+     *
+     * @return void
+     */
+    public function it_should_set_installing_themosis_theme()
+    {
+        $isInstallingThemosisTheme = false;
+
+        $this->setInstallingThemosisTheme($isInstallingThemosisTheme);
+        $this->isInstallingThemosisTheme()->shouldReturn($isInstallingThemosisTheme);
     }
 
     /**
