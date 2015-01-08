@@ -803,8 +803,8 @@ class Themosis
             $json = file_get_contents($composerJSON);
 
             // inject the json variables
-            $json = str_replace('"name": "mvpdesign/themosis"', '"name": "' . $config->getSiteSlug() . "'", $json);
-            $json = str_replace('"description": "The Themosis framework. A framework for WordPress developers."', '"description": "' . $config->getSiteDescription() . "'", $json);
+            $json = str_replace('"name": "mvpdesign/themosis"', '"name": "' . $config->getSiteSlug() . '"', $json);
+            $json = str_replace('"description": "The Themosis framework. A framework for WordPress developers."', '"description": "' . $config->getSiteDescription() . '"', $json);
 
             // update the themosis composer.json
             file_put_contents($composerJSON, $json, LOCK_EX);
