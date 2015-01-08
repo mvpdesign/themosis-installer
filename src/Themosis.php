@@ -1218,7 +1218,7 @@ class Themosis
     {
         $config = $this->getConfig();
 
-        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && gulp --silent deloy:' . $config->getEnvironment();
+        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && gulp deploy:' . $config->getEnvironment();
 
         $this->runProcess($command, 'Deployed themosis theme assets.', false, true);
     }
