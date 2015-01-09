@@ -310,6 +310,16 @@ class Config
     }
 
     /**
+     * get the namespace slug
+     *
+     * @return string
+     */
+    public function getNamespaceSlug()
+    {
+        return str_replace(' ', '', ucwords($this->siteTitle));
+    }
+
+    /**
      * get the site slug
      *
      * @return string
