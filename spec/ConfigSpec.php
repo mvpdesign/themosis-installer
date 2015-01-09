@@ -220,6 +220,20 @@ class ConfigSpec extends ObjectBehavior
     }
 
     /**
+     * it should return a namespace slug
+     *
+     * @return void
+     */
+    public function it_should_return_a_namespace_slug()
+    {
+        $siteTitle = 'a String';
+        $siteSlug = 'AString';
+
+        $this->setSiteTitle($siteTitle);
+        $this->getNamespaceSlug()->shouldReturn($siteSlug);
+    }
+
+    /**
      * it should return a site slug
      *
      * @return void
