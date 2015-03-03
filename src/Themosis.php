@@ -718,6 +718,9 @@ class Themosis
             // update the codeception yml
             $this->updateCodeceptionYml();
 
+            // update the namepspace
+            $this->updateNamespace();
+
             // rename the themosis theme directory
             $this->renameThemosisThemeDirectory();
         }
@@ -1200,6 +1203,59 @@ class Themosis
             file_put_contents($codeceptionYml, $yml, LOCK_EX);
 
             $io->write('Updated the themosis theme codeception.yml.');
+        }
+    }
+
+    /**
+     * update the namespace
+     *
+     * @return void
+     */
+    private function updateNamespace()
+    {
+        $config = $this->getConfig();
+        $io     = $this->getIO();
+
+        $files = array(
+            $this->retrieveThemosisThemePath('app/config/loading.config.php'),
+            $this->retrieveThemosisThemePath('app/controllers/BaseController.php'),
+            $this->retrieveThemosisThemePath('app/controllers/HomeController.php'),
+            $this->retrieveThemosisThemePath('app/models/theme/Assets.php'),
+            $this->retrieveThemosisThemePath('app/models/theme/Theme.php'),
+            $this->retrieveThemosisThemePath('app/models/wordpress/General.php'),
+            $this->retrieveThemosisThemePath('app/models/wordpress/Theme.php'),
+            $this->retrieveThemosisThemePath('app/routes.php'),
+            $this->retrieveThemosisThemePath('composer.json'),
+            $this->retrieveThemosisThemePath('phpspec.yml'),
+            $this->retrieveThemosisThemePath('tests/spec/MVPDesign/ThemosisTheme/Models/Theme/AssetsSpec.php'),
+            $this->retrieveThemosisThemePath('tests/spec/MVPDesign/ThemosisTheme/Models/Theme/ThemeSpec.php')
+        );
+
+        $paths = array(
+            $this->retrieveThemosisThemePath('tests/spec/MVPDesign/ThemosisTheme')
+        );
+
+        foreach ($files as $file) {
+            if (file_exists($file)) {
+                $contents = file_get_contents($file);
+
+                // inject the namespace
+                $contents = str_replace("MVPDesign\\ThemosisTheme", "MVPDesign\\" . $config->getNamespaceSlug() . "Theme", $contents);
+                $contents = str_replace("MVPDesign\\\\ThemosisTheme", "MVPDesign\\\\" . $config->getNamespaceSlug() . "Theme", $contents);
+
+                // update the namespace in the file
+                file_put_contents($file, $contents, LOCK_EX);
+
+                $io->write('Updated the php namespace in ' . $file . '.');
+            }
+        }
+
+        foreach ($paths as $path) {
+            if (file_exists($path)) {
+                $command = 'mv ' . $path . ' ' . $path . '/../' . $config->getNamespaceSlug() . 'Theme';
+
+                $this->runProcess($command, 'Updated the namespace path of ' . $path . '.', false, true);
+            }
         }
     }
 
