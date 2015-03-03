@@ -834,6 +834,7 @@ class Themosis
         $command .= ' --admin_user="' . $adminUser . '"';
         $command .= ' --admin_password="' . $adminPassword . '"';
         $command .= ' --admin_email="' . $adminEmail . '"';
+        $command .= ' --allow-root';
 
         $this->runProcess($command, 'WordPress installed successfully.');
     }
@@ -849,6 +850,7 @@ class Themosis
 
         $command  = $this->getBinDirectory() . 'wp comment delete ' . $commentID;
         $command .= ' --force';
+        $command .= ' --allow-root';
 
         $this->runProcess($command, 'Removed hello world WordPress comment.', false, true);
     }
@@ -864,6 +866,7 @@ class Themosis
 
         $command  = $this->getBinDirectory() . 'wp post delete ' . $postID;
         $command .= ' --force';
+        $command .= ' --allow-root';
 
         $this->runProcess($command, 'Removed hello world WordPress post.', false, true);
     }
@@ -883,6 +886,7 @@ class Themosis
         $command .= " --post_title='" . $postTitle . "'";
         $command .= " --post_name='" . str_replace(' ', '-', strtolower($postTitle)) . "'";
         $command .= " --post_content='" . $postContent . "'";
+        $command .= ' --allow-root';
 
         $this->runProcess($command, 'Refactored the sample WordPress page.', false, true);
     }
@@ -902,6 +906,7 @@ class Themosis
         $command .= 'UPDATE ' . $config->getDbPrefix() . 'users SET ID=' . $newAdminID . ' WHERE ID=' . $oldAdminID . '; ';
         $command .= 'UPDATE ' . $config->getDbPrefix() . 'usermeta SET user_id=' . $newAdminID . ' WHERE user_id=' . $oldAdminID . '; ';
         $command .= 'UPDATE ' . $config->getDbPrefix() . 'posts SET post_author=' . $newAdminID . ' WHERE post_author=' . $oldAdminID . '"';
+        $command .= ' --allow-root';
 
         $this->runProcess($command, 'Changed admin user ID.', false, true);
     }
@@ -916,6 +921,7 @@ class Themosis
         $config  = $this->getConfig();
         $options = array();
         $command = $this->getBinDirectory() . 'wp option update';
+        $command .= ' --allow-root';
 
         // add the options to update
         $options['blogdescription'] = $config->getSiteDescription();
@@ -942,6 +948,7 @@ class Themosis
         $command  = $this->getBinDirectory() . "wp rewrite structure '" . $structure . "'";
         $command .= ' --category-base=' . $categoryBase;
         $command .= ' --tag-base=' . $tagBase;
+        $command .= ' --allow-root';
 
         $this->runProcess($command, 'Updated the WordPress rewrite structure.', false, true);
     }
@@ -1153,6 +1160,7 @@ class Themosis
         $metaValue = 'home';
 
         $command = $this->getBinDirectory() . 'wp post meta set ' . $postID . ' ' . $metaKey . ' ' . $metaValue;
+        $command .= ' --allow-root';
 
         $this->runProcess($command, "Set the home page to the home themosis template.", false, true);
     }
@@ -1233,6 +1241,7 @@ class Themosis
         $config = $this->getConfig();
 
         $command = $this->getBinDirectory() . 'wp theme activate ' . $this->getTheme();
+        $command .= ' --allow-root';
 
         $this->runProcess($command, "Activated the '" . $this->getTheme() . "' WordPress theme.", false, true);
     }
@@ -1246,8 +1255,8 @@ class Themosis
     {
         // retrieve the theme path
         $themePathCommand  = $this->getBinDirectory() . 'wp theme path ' . $this->getTheme();
-
         $themePathCommand .= ' --dir';
+        $themePathCommand .= ' --allow-root';
 
         $themePath = $this->runProcess($themePathCommand, '', true) . '/' . $path;
 
