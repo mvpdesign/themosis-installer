@@ -323,10 +323,10 @@ class Themosis
         $io      = $this->getIO();
         $options = $this->getOptions();
 
-        if ($io->isInteractive()) {
-            try {
-                $environment = Config::validateEnvironment($this->getOption('environment'));
-            } catch (InvalidEnvironmentException $e) {
+        try {
+            $environment = Config::validateEnvironment($this->getOption('environment'));
+        } catch (InvalidEnvironmentException $e) {
+            if ($io->isInteractive()) {
                 // get answers to our questions
                 $environment = $io->askAndValidate(
                     Helper::formatQuestion('Environment', $config->getEnvironment()),
@@ -334,224 +334,295 @@ class Themosis
                     false,
                     $config->getEnvironment()
                 );
+            } else {
+                $environment = $config->getEnvironment();
             }
+        }
 
-            try {
-                $dbName = Helper::validateString($this->getOption('dbName'));
-            } catch (InvalidStringLengthException $e) {
+        try {
+            $dbName = Helper::validateString($this->getOption('dbName'));
+        } catch (InvalidStringLengthException $e) {
+            if ($io->isInteractive()) {
                 $dbName = $io->askAndValidate(
                     Helper::formatQuestion('Database name', $config->getDbName()),
                     "MVPDesign\ThemosisInstaller\Helper::validateString",
                     false,
                     $config->getDbName()
                 );
+            } else {
+                $dbName = $config->getDbName();
             }
+        }
 
-            try {
-                $dbUser = Helper::validateString($this->getOption('dbUser'));
-            } catch (InvalidStringLengthException $e) {
+        try {
+            $dbUser = Helper::validateString($this->getOption('dbUser'));
+        } catch (InvalidStringLengthException $e) {
+            if ($io->isInteractive()) {
                 $dbUser = $io->askAndValidate(
                     Helper::formatQuestion('Database user', $config->getDbUser()),
                     "MVPDesign\ThemosisInstaller\Helper::validateString",
                     false,
                     $config->getDbUser()
                 );
+            } else {
+                $dbUser = $config->getDbUser();
             }
+        }
 
-            try {
-                $dbPassword = Helper::validateString($this->getOption('dbPassword'));
-            } catch (InvalidStringLengthException $e) {
+        try {
+            $dbPassword = Helper::validateString($this->getOption('dbPassword'));
+        } catch (InvalidStringLengthException $e) {
+            if ($io->isInteractive()) {
                 $dbPassword = $io->askAndValidate(
                     Helper::formatQuestion('Database passsword', $config->getDbPassword()),
                     "MVPDesign\ThemosisInstaller\Helper::validateString",
                     false,
                     $config->getDbPassword()
                 );
+            } else {
+                $dbPassword = $config->getDbPassword();
             }
+        }
 
-            try {
-                $dbHost = Helper::validateString($this->getOption('dbHost'));
-            } catch (InvalidStringLengthException $e) {
+        try {
+            $dbHost = Helper::validateString($this->getOption('dbHost'));
+        } catch (InvalidStringLengthException $e) {
+            if ($io->isInteractive()) {
                 $dbHost = $io->askAndValidate(
                     Helper::formatQuestion('Database host', $config->getDbHost()),
                     "MVPDesign\ThemosisInstaller\Helper::validateString",
                     false,
                     $config->getDbHost()
                 );
+            } else {
+                $dbHost = $config->getDbHost();
             }
+        }
 
-            try {
-                $dbPrefix = Helper::validateString($this->getOption('dbPrefix'));
-            } catch (InvalidStringLengthException $e) {
+        try {
+            $dbPrefix = Helper::validateString($this->getOption('dbPrefix'));
+        } catch (InvalidStringLengthException $e) {
+            if ($io->isInteractive()) {
                 $dbPrefix = $io->askAndValidate(
                     Helper::formatQuestion('Database prefix', $config->getDbPrefix()),
                     "MVPDesign\ThemosisInstaller\Helper::validateString",
                     false,
                     $config->getDbPrefix()
                 );
+            } else {
+                $dbPrefix = $config->getDbPrefix();
             }
+        }
 
-            try {
-                $siteUrl = Helper::validateURL($this->getOption('siteUrl'));
-            } catch (InvalidURLException $e) {
+        try {
+            $siteUrl = Helper::validateURL($this->getOption('siteUrl'));
+        } catch (InvalidURLException $e) {
+            if ($io->isInteractive()) {
                 $siteUrl = $io->askAndValidate(
                     Helper::formatQuestion('Site URL', $config->getSiteUrl()),
                     "MVPDesign\ThemosisInstaller\Helper::validateURL",
                     false,
                     $config->getSiteUrl()
                 );
+            } else {
+                $siteUrl = $config->getSiteUrl();
             }
+        }
 
-            try {
-                $generatingWordPressSalts = Helper::validateConfirmation($this->getOption('generatingWordPressSalts'));
-            } catch (InvalidConfirmationException $e) {
+        try {
+            $generatingWordPressSalts = Helper::validateConfirmation($this->getOption('generatingWordPressSalts'));
+        } catch (InvalidConfirmationException $e) {
+            if ($io->isInteractive()) {
                 $generatingWordPressSalts = $io->askAndValidate(
                     Helper::formatQuestion('Generate WordPress Salts', $this->isGeneratingWordPressSalts() ? 'y' : 'n'),
                     "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
                     false,
                     $this->isGeneratingWordPressSalts() ? 'y' : 'n'
                 );
+            } else {
+                $generatingWordPressSalts = $this->isGeneratingWordPressSalts() ? 'y' : 'n';
             }
+        }
 
-            try {
-                $configuringThemosis = Helper::validateConfirmation($this->getOption('configuringThemosis'));
-            } catch (InvalidConfirmationException $e) {
+        try {
+            $configuringThemosis = Helper::validateConfirmation($this->getOption('configuringThemosis'));
+        } catch (InvalidConfirmationException $e) {
+            if ($io->isInteractive()) {
                 $configuringThemosis = $io->askAndValidate(
                     Helper::formatQuestion('Configure Themosis', $this->isConfiguringThemosis() ? 'y' : 'n'),
                     "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
                     false,
                     $this->isConfiguringThemosis() ? 'y' : 'n'
                 );
+            } else {
+                $configuringThemosis = $this->isConfiguringThemosis() ? 'y' : 'n';
             }
+        }
 
-            try {
-                $installingWordPress = Helper::validateConfirmation($this->getOption('installingWordPress'));
-            } catch (InvalidConfirmationException $e) {
+        try {
+            $installingWordPress = Helper::validateConfirmation($this->getOption('installingWordPress'));
+        } catch (InvalidConfirmationException $e) {
+            if ($io->isInteractive()) {
                 $installingWordPress = $io->askAndValidate(
                     Helper::formatQuestion('Install WordPress', $this->isInstallingWordPress() ? 'y' : 'n'),
                     "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
                     false,
                     $this->isInstallingWordPress() ? 'y' : 'n'
                 );
+            } else {
+                $installingWordPress = $this->isInstallingWordPress() ? 'y' : 'n';
             }
+        }
 
-            try {
-                $configuringThemosisTheme = Helper::validateConfirmation($this->getOption('configuringThemosisTheme'));
-            } catch (InvalidConfirmationException $e) {
+        try {
+            $configuringThemosisTheme = Helper::validateConfirmation($this->getOption('configuringThemosisTheme'));
+        } catch (InvalidConfirmationException $e) {
+            if ($io->isInteractive()) {
                 $configuringThemosisTheme = $io->askAndValidate(
                     Helper::formatQuestion('Configure Themosis Theme', $this->isConfiguringThemosisTheme() ? 'y' : 'n'),
                     "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
                     false,
                     $this->isConfiguringThemosisTheme() ? 'y' : 'n'
                 );
+            } else {
+                $configuringThemosisTheme = $this->isConfiguringThemosisTheme() ? 'y' : 'n';
             }
+        }
 
-            try {
-                $installingThemosisTheme = Helper::validateConfirmation($this->getOption('installingThemosisTheme'));
-            } catch (InvalidConfirmationException $e) {
+        try {
+            $installingThemosisTheme = Helper::validateConfirmation($this->getOption('installingThemosisTheme'));
+        } catch (InvalidConfirmationException $e) {
+            if ($io->isInteractive()) {
                 $installingThemosisTheme = $io->askAndValidate(
                     Helper::formatQuestion('Install Themosis Theme', $this->isInstallingThemosisTheme() ? 'y' : 'n'),
                     "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
                     false,
                     $this->isInstallingThemosisTheme() ? 'y' : 'n'
                 );
+            } else {
+                $installingThemosisTheme = $this->isInstallingThemosisTheme() ? 'y' : 'n';
             }
+        }
 
-            // save the answers
-            $config->setEnvironment($environment);
-            $config->setDbName($dbName);
-            $config->setDbUser($dbUser);
-            $config->setDbPassword($dbPassword);
-            $config->setDbHost($dbHost);
-            $config->setDbPrefix($dbPrefix);
-            $config->setSiteUrl($siteUrl);
+        // save the answers
+        $config->setEnvironment($environment);
+        $config->setDbName($dbName);
+        $config->setDbUser($dbUser);
+        $config->setDbPassword($dbPassword);
+        $config->setDbHost($dbHost);
+        $config->setDbPrefix($dbPrefix);
+        $config->setSiteUrl($siteUrl);
 
-            $this->setGeneratingWordPressSalts($generatingWordPressSalts == 'y' ? true : false);
-            $this->setConfiguringThemosis($configuringThemosis == 'y' ? true : false);
-            $this->setInstallingWordPress($installingWordPress == 'y' ? true : false);
-            $this->setConfiguringThemosisTheme($configuringThemosisTheme == 'y' ? true : false);
-            $this->setInstallingThemosisTheme($installingThemosisTheme == 'y' ? true : false);
+        $this->setGeneratingWordPressSalts($generatingWordPressSalts == 'y' ? true : false);
+        $this->setConfiguringThemosis($configuringThemosis == 'y' ? true : false);
+        $this->setInstallingWordPress($installingWordPress == 'y' ? true : false);
+        $this->setConfiguringThemosisTheme($configuringThemosisTheme == 'y' ? true : false);
+        $this->setInstallingThemosisTheme($installingThemosisTheme == 'y' ? true : false);
 
-            // extra questions if configuring themosis OR installing wordpress OR configuring themosis theme
-            if ($configuringThemosis == 'y' || $installingWordPress == 'y' || $configuringThemosisTheme == 'y') {
-                try {
-                    $siteTitle = Helper::validateString($this->getOption('siteTitle'));
-                } catch (InvalidStringLengthException $e) {
+        // extra questions if configuring themosis OR installing wordpress OR configuring themosis theme
+        if ($configuringThemosis == 'y' || $installingWordPress == 'y' || $configuringThemosisTheme == 'y') {
+            try {
+                $siteTitle = Helper::validateString($this->getOption('siteTitle'));
+            } catch (InvalidStringLengthException $e) {
+                if ($io->isInteractive()) {
                     $siteTitle = $io->askAndValidate(
                         Helper::formatQuestion('Site Title', $config->getSiteTitle()),
                         "MVPDesign\ThemosisInstaller\Helper::validateString",
                         false,
                         $config->getSiteTitle()
                     );
+                } else {
+                    $siteTitle = $this->getSiteTitle();
                 }
+            }
 
-                $siteDescription = $this->getOption('siteDescription');
-                if ($siteDescription === false) {
+            $siteDescription = $this->getOption('siteDescription');
+            if ($siteDescription === false) {
+                if ($io->isInteractive()) {
                     $siteDescription = $io->ask(
                         Helper::formatQuestion('Site Description', $config->getSiteDescription()),
                         $config->getSiteDescription()
                     );
+                } else {
+                    $siteDescription = $this->getSiteDescription();
                 }
-
-                // save the answers
-                $config->setSiteTitle($siteTitle);
-                $config->setSiteDescription($siteDescription);
             }
 
-            // extra questions if installing wordpress
-            if ($installingWordPress == 'y') {
-                try {
-                    $isSitePublic = Helper::validateConfirmation($this->getOption('isSitePublic'));
-                } catch (InvalidConfirmationException $e) {
+            // save the answers
+            $config->setSiteTitle($siteTitle);
+            $config->setSiteDescription($siteDescription);
+        }
+
+        // extra questions if installing wordpress
+        if ($installingWordPress == 'y') {
+            try {
+                $isSitePublic = Helper::validateConfirmation($this->getOption('isSitePublic'));
+            } catch (InvalidConfirmationException $e) {
+                if ($io->isInteractive()) {
                     $isSitePublic = $io->askAndValidate(
                         Helper::formatQuestion('Site visible to search engines', $config->isSitePublic() ? 'y' : 'n'),
                         "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
                         false,
                         $config->isSitePublic() ? 'y' : 'n'
                     );
+                } else {
+                    $isSitePublic = $config->isSitePublic() ? 'y' : 'n';
                 }
+            }
 
-                try {
-                    $adminUser = Helper::validateString($this->getOption('adminUser'));
-                } catch (InvalidStringLengthException $e) {
+            try {
+                $adminUser = Helper::validateString($this->getOption('adminUser'));
+            } catch (InvalidStringLengthException $e) {
+                if ($io->isInteractive()) {
                     $adminUser = $io->askAndValidate(
                         Helper::formatQuestion('Admin User', $config->getAdminUser()),
                         "MVPDesign\ThemosisInstaller\Helper::validateString",
                         false,
                         $config->getAdminUser()
                     );
+                } else {
+                    $adminUser = $config->getAdminUser();
                 }
+            }
 
-                try {
-                    $adminPassword = Helper::validateString($this->getOption('adminPassword'));
-                } catch (InvalidStringLengthException $e) {
+            try {
+                $adminPassword = Helper::validateString($this->getOption('adminPassword'));
+            } catch (InvalidStringLengthException $e) {
+                if ($io->isInteractive()) {
                     $adminPassword = $io->askAndValidate(
                         Helper::formatQuestion('Admin Password', $config->getAdminPassword()),
                         "MVPDesign\ThemosisInstaller\Helper::validateString",
                         false,
                         $config->getAdminPassword()
                     );
+                } else {
+                    $adminPassword = $config->getAdminPassword();
                 }
+            }
 
-                try {
-                    $adminEmail = Helper::validateEmail($this->getOption('adminEmail'));
-                } catch (InvalidEmailException $e) {
+            try {
+                $adminEmail = Helper::validateEmail($this->getOption('adminEmail'));
+            } catch (InvalidEmailException $e) {
+                if ($io->isInteractive()) {
                     $adminEmail = $io->askAndValidate(
                         Helper::formatQuestion('Admin Email', $config->getAdminEmail()),
                         "MVPDesign\ThemosisInstaller\Helper::validateEmail",
                         false,
                         $config->getAdminEmail()
                     );
+                } else {
+                    $adminEmail = $config->getAdminEmail();
                 }
-
-                // save the answers
-                $config->setSiteTitle($siteTitle);
-                $config->setSiteDescription($siteDescription);
-                $config->setIsSitePublic($isSitePublic == 'y' ? true : false);
-                $config->setAdminUser($adminUser);
-                $config->setAdminPassword($adminPassword);
-                $config->setAdminEmail($adminEmail);
             }
+
+            // save the answers
+            $config->setSiteTitle($siteTitle);
+            $config->setSiteDescription($siteDescription);
+            $config->setIsSitePublic($isSitePublic == 'y' ? true : false);
+            $config->setAdminUser($adminUser);
+            $config->setAdminPassword($adminPassword);
+            $config->setAdminEmail($adminEmail);
+        }
 
             // extra questions if installing themosis theme
             if ($installingThemosisTheme == 'y') {
@@ -569,7 +640,6 @@ class Themosis
                 // save the answers
                 $this->setTheme($theme);
             }
-        }
     }
 
     /**
