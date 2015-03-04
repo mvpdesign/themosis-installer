@@ -1338,7 +1338,8 @@ class Themosis
      */
     private function installThemosisThemeBowerComponents()
     {
-        $command = 'cd ' . $this->retrieveThemosisThemePath() . ' && bower install';
+        $command  = 'cd ' . $this->retrieveThemosisThemePath() . ' && bower install';
+        $command .= ' --allow-root';
 
         $this->runProcess($command, 'Installed bower components.', false, true);
     }
