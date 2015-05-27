@@ -331,7 +331,7 @@ class Themosis
                 $environment = $io->askAndValidate(
                     Helper::formatQuestion('Environment', $config->getEnvironment()),
                     "MVPDesign\ThemosisInstaller\Config::validateEnvironment",
-                    false,
+                    10,
                     $config->getEnvironment()
                 );
             } else {
@@ -346,7 +346,7 @@ class Themosis
                 $dbName = $io->askAndValidate(
                     Helper::formatQuestion('Database name', $config->getDbName()),
                     "MVPDesign\ThemosisInstaller\Helper::validateString",
-                    false,
+                    10,
                     $config->getDbName()
                 );
             } else {
@@ -361,7 +361,7 @@ class Themosis
                 $dbUser = $io->askAndValidate(
                     Helper::formatQuestion('Database user', $config->getDbUser()),
                     "MVPDesign\ThemosisInstaller\Helper::validateString",
-                    false,
+                    10,
                     $config->getDbUser()
                 );
             } else {
@@ -376,7 +376,7 @@ class Themosis
                 $dbPassword = $io->askAndValidate(
                     Helper::formatQuestion('Database passsword', $config->getDbPassword()),
                     "MVPDesign\ThemosisInstaller\Helper::validateString",
-                    false,
+                    10,
                     $config->getDbPassword()
                 );
             } else {
@@ -391,7 +391,7 @@ class Themosis
                 $dbHost = $io->askAndValidate(
                     Helper::formatQuestion('Database host', $config->getDbHost()),
                     "MVPDesign\ThemosisInstaller\Helper::validateString",
-                    false,
+                    10,
                     $config->getDbHost()
                 );
             } else {
@@ -406,7 +406,7 @@ class Themosis
                 $dbPrefix = $io->askAndValidate(
                     Helper::formatQuestion('Database prefix', $config->getDbPrefix()),
                     "MVPDesign\ThemosisInstaller\Helper::validateString",
-                    false,
+                    10,
                     $config->getDbPrefix()
                 );
             } else {
@@ -421,7 +421,7 @@ class Themosis
                 $siteUrl = $io->askAndValidate(
                     Helper::formatQuestion('Site URL', $config->getSiteUrl()),
                     "MVPDesign\ThemosisInstaller\Helper::validateURL",
-                    false,
+                    10,
                     $config->getSiteUrl()
                 );
             } else {
@@ -436,7 +436,7 @@ class Themosis
                 $generatingWordPressSalts = $io->askAndValidate(
                     Helper::formatQuestion('Generate WordPress Salts', $this->isGeneratingWordPressSalts() ? 'y' : 'n'),
                     "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
-                    false,
+                    10,
                     $this->isGeneratingWordPressSalts() ? 'y' : 'n'
                 );
             } else {
@@ -451,7 +451,7 @@ class Themosis
                 $configuringThemosis = $io->askAndValidate(
                     Helper::formatQuestion('Configure Themosis', $this->isConfiguringThemosis() ? 'y' : 'n'),
                     "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
-                    false,
+                    10,
                     $this->isConfiguringThemosis() ? 'y' : 'n'
                 );
             } else {
@@ -466,7 +466,7 @@ class Themosis
                 $installingWordPress = $io->askAndValidate(
                     Helper::formatQuestion('Install WordPress', $this->isInstallingWordPress() ? 'y' : 'n'),
                     "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
-                    false,
+                    10,
                     $this->isInstallingWordPress() ? 'y' : 'n'
                 );
             } else {
@@ -481,7 +481,7 @@ class Themosis
                 $configuringThemosisTheme = $io->askAndValidate(
                     Helper::formatQuestion('Configure Themosis Theme', $this->isConfiguringThemosisTheme() ? 'y' : 'n'),
                     "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
-                    false,
+                    10,
                     $this->isConfiguringThemosisTheme() ? 'y' : 'n'
                 );
             } else {
@@ -496,7 +496,7 @@ class Themosis
                 $installingThemosisTheme = $io->askAndValidate(
                     Helper::formatQuestion('Install Themosis Theme', $this->isInstallingThemosisTheme() ? 'y' : 'n'),
                     "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
-                    false,
+                    10,
                     $this->isInstallingThemosisTheme() ? 'y' : 'n'
                 );
             } else {
@@ -528,7 +528,7 @@ class Themosis
                     $siteTitle = $io->askAndValidate(
                         Helper::formatQuestion('Site Title', $config->getSiteTitle()),
                         "MVPDesign\ThemosisInstaller\Helper::validateString",
-                        false,
+                        10,
                         $config->getSiteTitle()
                     );
                 } else {
@@ -562,7 +562,7 @@ class Themosis
                     $isSitePublic = $io->askAndValidate(
                         Helper::formatQuestion('Site visible to search engines', $config->isSitePublic() ? 'y' : 'n'),
                         "MVPDesign\ThemosisInstaller\Helper::validateConfirmation",
-                        false,
+                        10,
                         $config->isSitePublic() ? 'y' : 'n'
                     );
                 } else {
@@ -577,7 +577,7 @@ class Themosis
                     $adminUser = $io->askAndValidate(
                         Helper::formatQuestion('Admin User', $config->getAdminUser()),
                         "MVPDesign\ThemosisInstaller\Helper::validateString",
-                        false,
+                        10,
                         $config->getAdminUser()
                     );
                 } else {
@@ -592,7 +592,7 @@ class Themosis
                     $adminPassword = $io->askAndValidate(
                         Helper::formatQuestion('Admin Password', $config->getAdminPassword()),
                         "MVPDesign\ThemosisInstaller\Helper::validateString",
-                        false,
+                        10,
                         $config->getAdminPassword()
                     );
                 } else {
@@ -607,7 +607,7 @@ class Themosis
                     $adminEmail = $io->askAndValidate(
                         Helper::formatQuestion('Admin Email', $config->getAdminEmail()),
                         "MVPDesign\ThemosisInstaller\Helper::validateEmail",
-                        false,
+                        10,
                         $config->getAdminEmail()
                     );
                 } else {
@@ -632,7 +632,7 @@ class Themosis
                     $theme = $io->askAndValidate(
                         Helper::formatQuestion('Theme', $this->getTheme()),
                         "MVPDesign\ThemosisInstaller\Helper::validateString",
-                        false,
+                        10,
                         $this->getTheme()
                     );
                 }
